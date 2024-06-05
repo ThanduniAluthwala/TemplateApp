@@ -1,0 +1,235 @@
+# This server stub spec is not to be utilized by the service.
+# It is only for demonstration purposes
+# An example utilization of this spec could be found ${project.basedir}/src/main/java/delegate/TemplateSampleDelegate
+# check http://{server}:{port}/swagger-ui-custom.html for swagger ui view of APIs
+# for more details : "https://swagger.io/docs/specification"
+
+openapi: 3.0.0
+servers:
+  - url: http://localhost:9095/api
+    description: Template server
+info:
+  description: >-
+    This is a set of sample service apis using Openapi generator.
+  version: 1.0.0
+  title: template sample Api
+  license:
+    name: Apache-2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+
+# The API end point data and specifications
+paths:
+
+  #1
+  /v1/sampleTemplate/data/{id1},{id2}:
+    get:
+      tags:
+        - sample
+      summary: Sample Get Api using openapi generator
+      description: Results will be different by product or based on roles of the current logged in user
+      operationId: sampleTemplateGetApi
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Token for Authorization
+          required: true
+          schema:
+            type: string
+            default: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA4MjIxMjEsImlhdCI6MTcxMDgyMDkyMSwianRpIjoiZDg0ZDVlYWYtNjAzNi00YTk0LWE5ZTItZjU0NDY1MmU3MWQ3IiwiaXNzIjoiaHR0cHM6Ly9leGFtcGxlLnFiaXR1bS5uZXQvYXV0aC9yZWFsbXMvUUIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNWYxNTEzMjMtNzgzMS00MTc3LWI5ZjItODI0MGMxOGRmY2Y5IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoicHJvdGVjdGVkIiwic2Vzc2lvbl9zdGF0ZSI6Ijc0ZWJjNjgxLWEzOGYtNDhlZC04ZGMxLWM3Njk1MmM5OTNmOCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXFiLWluc3BlY3QiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6Ijc0ZWJjNjgxLWEzOGYtNDhlZC04ZGMxLWM3Njk1MmM5OTNmOCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJvZmlsZSI6ImhlaHV3aGRkIiwibmFtZSI6ImRldiB1c2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGV2dXNlciIsImdpdmVuX25hbWUiOiJkZXYiLCJmYW1pbHlfbmFtZSI6InVzZXIiLCJlbWFpbCI6ImRldnVzZXJAcWJpdHVtLmNvbSJ9.DAItVmFlE7Vs57GE0Svc0lbt-4QVaIuxA5q12EOWDwQ"
+        - name: X-Client-Id
+          in: header
+          description: client ID
+          required: true
+          schema:
+            type: string
+            default: "web"
+        - name: id1
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id2
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id3
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "query-id-3"
+      responses:
+        '200':
+          description: 'list of available components'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+
+  #2
+  /v1/sampleTemplate/postData:
+    post:
+      tags:
+        - sample
+      summary: Sample post Api using openapi generator
+      description: Results will be different by product or based on roles of the current logged in user
+      operationId: sampleTemplatePostApi
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Token for Authorization
+          required: true
+          schema:
+            type: string
+            default: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA4MjIxMjEsImlhdCI6MTcxMDgyMDkyMSwianRpIjoiZDg0ZDVlYWYtNjAzNi00YTk0LWE5ZTItZjU0NDY1MmU3MWQ3IiwiaXNzIjoiaHR0cHM6Ly9leGFtcGxlLnFiaXR1bS5uZXQvYXV0aC9yZWFsbXMvUUIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNWYxNTEzMjMtNzgzMS00MTc3LWI5ZjItODI0MGMxOGRmY2Y5IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoicHJvdGVjdGVkIiwic2Vzc2lvbl9zdGF0ZSI6Ijc0ZWJjNjgxLWEzOGYtNDhlZC04ZGMxLWM3Njk1MmM5OTNmOCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXFiLWluc3BlY3QiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6Ijc0ZWJjNjgxLWEzOGYtNDhlZC04ZGMxLWM3Njk1MmM5OTNmOCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJvZmlsZSI6ImhlaHV3aGRkIiwibmFtZSI6ImRldiB1c2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGV2dXNlciIsImdpdmVuX25hbWUiOiJkZXYiLCJmYW1pbHlfbmFtZSI6InVzZXIiLCJlbWFpbCI6ImRldnVzZXJAcWJpdHVtLmNvbSJ9.DAItVmFlE7Vs57GE0Svc0lbt-4QVaIuxA5q12EOWDwQ"
+        - name: X-Client-Id
+          in: header
+          description: client ID
+          required: true
+          schema:
+            type: string
+            default: "web"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SampleRequest'
+      responses:
+        '201':
+          description: 'list of components has been added'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+  #3
+  /v2/sampleTemplate/getData:
+    get:
+      tags:
+        - sample
+      summary: Sample Get Api using openapi generator
+      description: Results will be different by product or based on roles of the current logged in user
+      operationId: getDataV2
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Token for Authorization
+          required: true
+          schema:
+            type: string
+            default: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA4MjIxMjEsImlhdCI6MTcxMDgyMDkyMSwianRpIjoiZDg0ZDVlYWYtNjAzNi00YTk0LWE5ZTItZjU0NDY1MmU3MWQ3IiwiaXNzIjoiaHR0cHM6Ly9leGFtcGxlLnFiaXR1bS5uZXQvYXV0aC9yZWFsbXMvUUIiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiNWYxNTEzMjMtNzgzMS00MTc3LWI5ZjItODI0MGMxOGRmY2Y5IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoicHJvdGVjdGVkIiwic2Vzc2lvbl9zdGF0ZSI6Ijc0ZWJjNjgxLWEzOGYtNDhlZC04ZGMxLWM3Njk1MmM5OTNmOCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXFiLWluc3BlY3QiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6Ijc0ZWJjNjgxLWEzOGYtNDhlZC04ZGMxLWM3Njk1MmM5OTNmOCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJvZmlsZSI6ImhlaHV3aGRkIiwibmFtZSI6ImRldiB1c2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiZGV2dXNlciIsImdpdmVuX25hbWUiOiJkZXYiLCJmYW1pbHlfbmFtZSI6InVzZXIiLCJlbWFpbCI6ImRldnVzZXJAcWJpdHVtLmNvbSJ9.DAItVmFlE7Vs57GE0Svc0lbt-4QVaIuxA5q12EOWDwQ"
+        - name: X-Client-Id
+          in: header
+          description: client ID
+          required: true
+          schema:
+            type: string
+            default: "web"
+        - name: id3
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "query-id-3"
+      responses:
+        '200':
+          description: 'list of available components'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+
+# Re-usable Request and Response DTOs
+components:
+  schemas:
+    SampleRequest:
+      type: object
+      required:
+        - idList
+        - number
+      properties:
+        number:
+          type: integer
+          format: int32
+        idList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SampleData'
+    ServerErrorResponse:
+      type: object
+      required:
+        - code
+        - status
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        errorPath:
+          type: string
+        description:
+          type: string
+    SampleResponse:
+      type: object
+      required:
+        - "userId"
+        - "message"
+        - "data"
+      properties:
+        userId:
+          type: string
+        message:
+          type: string
+        code:
+          type: integer
+          format: int32
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SampleData'
+    SampleData:
+      type: object
+      required:
+        - "id1"
+        - "id2"
+        - "id3"
+      properties:
+        id1:
+          type: string
+        id2:
+          type: string
+        id3:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+

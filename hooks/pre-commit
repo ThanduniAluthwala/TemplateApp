@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+#Apply code styling in pre-commit
+mvn spotless:apply
+
+#Run unit tests
+mvn test
+
+#Adding modified files to git
+git add --all
+git status
