@@ -31,6 +31,7 @@ com/qbitum/template/annotations/LogFluxMethodExecutionTime.class
 com/qbitum/template/exception/enums/ServerError.class
 com/qbitum/template/client/model/WeatherInfo.class
 com/qbitum/template/delegate/v2/TemplateSampleDelegateV2.class
+com/qbitum/template/controller/Fruit.class
 com/qbitum/template/server/api/V1Api$1.class
 com/qbitum/template/annotations/LogMonoMethodExecutionTime.class
 com/qbitum/template/dao/impl/SampleDaoImpl.class
@@ -50,6 +51,7 @@ com/qbitum/template/dto/request/SampleRequest.class
 com/qbitum/template/server/api/V2Api.class
 com/qbitum/template/server/api/V2ApiController$1.class
 com/qbitum/template/server/api/V2ApiDelegate.class
+com/qbitum/template/dao/FruitDao.class
 com/qbitum/template/security/SecurityConfig.class
 com/qbitum/template/controller/FruitController.class
 com/qbitum/template/Model/PermissionModel.class

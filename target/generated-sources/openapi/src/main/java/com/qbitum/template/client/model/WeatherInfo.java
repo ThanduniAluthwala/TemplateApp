@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   WeatherInfo.JSON_PROPERTY_TEMPERATURE,
   WeatherInfo.JSON_PROPERTY_CONDITIONS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-01-09T15:39:06.395768156+05:30[Asia/Colombo]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-01-09T15:41:22.497372960+05:30[Asia/Colombo]")
 public class WeatherInfo implements Serializable {
   private static final long serialVersionUID = 1L;
 

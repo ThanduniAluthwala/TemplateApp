@@ -3,7 +3,7 @@ package com.qbitum.template.client.auth;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-01-09T15:39:06.395768156+05:30[Asia/Colombo]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-01-09T15:41:22.497372960+05:30[Asia/Colombo]")
 public class ApiKeyAuth implements Authentication {
     private final String location;
     private final String paramName;
