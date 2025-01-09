@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SampleRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.server.model</a> &gt; <span class="el_source">SampleRequest.java</span></div><h1>SampleRequest.java</h1><pre class="source lang-java linenums">package com.qbitum.template.server.model;
+
+import java.net.URI;
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.qbitum.template.server.model.SampleData;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.openapitools.jackson.nullable.JsonNullable;
+import java.time.OffsetDateTime;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+
+import java.util.*;
+import jakarta.annotation.Generated;
+
+/**
+ * SampleRequest
+ */
+
+@Generated(value = &quot;org.openapitools.codegen.languages.SpringCodegen&quot;, date = &quot;2025-01-09T15:39:05.889641620+05:30[Asia/Colombo]&quot;)
+public class SampleRequest {
+
+  private Integer number;
+
+<span class="nc" id="L30">  @Valid</span>
+  private List&lt;@Valid SampleData&gt; idList = new ArrayList&lt;&gt;();
+
+  public SampleRequest() {
+<span class="nc" id="L34">    super();</span>
+<span class="nc" id="L35">  }</span>
+
+  /**
+   * Constructor with only required parameters
+   */
+<span class="nc" id="L40">  public SampleRequest(Integer number, List&lt;@Valid SampleData&gt; idList) {</span>
+<span class="nc" id="L41">    this.number = number;</span>
+<span class="nc" id="L42">    this.idList = idList;</span>
+<span class="nc" id="L43">  }</span>
+
+  public SampleRequest number(Integer number) {
+<span class="nc" id="L46">    this.number = number;</span>
+<span class="nc" id="L47">    return this;</span>
+  }
+
+  /**
+   * Get number
+   * @return number
+  */
+  @NotNull 
+  @Schema(name = &quot;number&quot;, requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty(&quot;number&quot;)
+  public Integer getNumber() {
+<span class="nc" id="L58">    return number;</span>
+  }
+
+  public void setNumber(Integer number) {
+<span class="nc" id="L62">    this.number = number;</span>
+<span class="nc" id="L63">  }</span>
+
+  public SampleRequest idList(List&lt;@Valid SampleData&gt; idList) {
+<span class="nc" id="L66">    this.idList = idList;</span>
+<span class="nc" id="L67">    return this;</span>
+  }
+
+  public SampleRequest addIdListItem(SampleData idListItem) {
+<span class="nc bnc" id="L71" title="All 2 branches missed.">    if (this.idList == null) {</span>
+<span class="nc" id="L72">      this.idList = new ArrayList&lt;&gt;();</span>
+    }
+<span class="nc" id="L74">    this.idList.add(idListItem);</span>
+<span class="nc" id="L75">    return this;</span>
+  }
+
+  /**
+   * Get idList
+   * @return idList
+  */
+  @NotNull @Valid 
+  @Schema(name = &quot;idList&quot;, requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty(&quot;idList&quot;)
+  public List&lt;@Valid SampleData&gt; getIdList() {
+<span class="nc" id="L86">    return idList;</span>
+  }
+
+  public void setIdList(List&lt;@Valid SampleData&gt; idList) {
+<span class="nc" id="L90">    this.idList = idList;</span>
+<span class="nc" id="L91">  }</span>
+
+  @Override
+  public boolean equals(Object o) {
+<span class="nc bnc" id="L95" title="All 2 branches missed.">    if (this == o) {</span>
+<span class="nc" id="L96">      return true;</span>
+    }
+<span class="nc bnc" id="L98" title="All 4 branches missed.">    if (o == null || getClass() != o.getClass()) {</span>
+<span class="nc" id="L99">      return false;</span>
+    }
+<span class="nc" id="L101">    SampleRequest sampleRequest = (SampleRequest) o;</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">    return Objects.equals(this.number, sampleRequest.number) &amp;&amp;</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        Objects.equals(this.idList, sampleRequest.idList);</span>
+  }
+
+  @Override
+  public int hashCode() {
+<span class="nc" id="L108">    return Objects.hash(number, idList);</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="nc" id="L113">    StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L114">    sb.append(&quot;class SampleRequest {\n&quot;);</span>
+<span class="nc" id="L115">    sb.append(&quot;    number: &quot;).append(toIndentedString(number)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L116">    sb.append(&quot;    idList: &quot;).append(toIndentedString(idList)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L117">    sb.append(&quot;}&quot;);</span>
+<span class="nc" id="L118">    return sb.toString();</span>
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(Object o) {
+<span class="nc bnc" id="L126" title="All 2 branches missed.">    if (o == null) {</span>
+<span class="nc" id="L127">      return &quot;null&quot;;</span>
+    }
+<span class="nc" id="L129">    return o.toString().replace(&quot;\n&quot;, &quot;\n    &quot;);</span>
+  }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AnnotationCombinationAspect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.annotations.aspect</a> &gt; <span class="el_source">AnnotationCombinationAspect.java</span></div><h1>AnnotationCombinationAspect.java</h1><pre class="source lang-java linenums">package com.qbitum.template.annotations.aspect;
+
+import com.qbitum.template.annotations.LogFluxMethodExecutionTime;
+import com.qbitum.template.annotations.LogMonoMethodExecutionTime;
+import com.qbitum.template.annotations.OpaPermissionFlux;
+import com.qbitum.template.annotations.OpaPermissionMono;
+import com.qbitum.template.exception.DelegateResponseException;
+import com.qbitum.template.exception.enums.ServerError;
+import com.qbitum.template.utility.SourcePath;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+
+/**
+ * Aspect class to provide custom annotation usage rules
+ */
+
+@Configuration
+<span class="fc" id="L22">@Slf4j</span>
+@Aspect
+@Order(1)
+<span class="fc" id="L25">public class AnnotationCombinationAspect {</span>
+
+    /***
+     * Forbid combined usage of @LogMonoMethodExecutionTime and @OpaPermissionMono on methods
+     */
+    @Before(
+        &quot;@annotation(logMonoMethodExecutionTime) &amp;&amp; @annotation(opaPermissionMono)&quot;
+    )
+    public void checkMonoLogAuthCombination(
+        JoinPoint joinPoint,
+        LogMonoMethodExecutionTime logMonoMethodExecutionTime,
+        OpaPermissionMono opaPermissionMono
+    ) {
+<span class="nc" id="L38">        String methodName = joinPoint.getSignature().getName();</span>
+<span class="nc" id="L39">        String className = joinPoint.getTarget().getClass().getSimpleName();</span>
+
+<span class="nc" id="L41">        throw new DelegateResponseException(</span>
+            &quot;A method Cannot be annotated with @LogMonoMethodExecutionTime and @OpaPermissionMono, Use @OpaPermissionMono instead&quot;,
+            ServerError.ANNOTATION_USAGE_ERROR,
+            &quot;Exception : &quot; +
+<span class="nc" id="L45">            SourcePath.findCurrentPath() +</span>
+            &quot; : Origin : &quot; +
+            className +
+            &quot; -&gt; &quot; +
+            methodName
+        );
+    }
+
+    /***
+     * Forbid combined usage of @LogMonoMethodExecutionTime and @LogFluxMethodExecutionTime on methods
+     */
+    @Before(
+        &quot;@annotation(logMonoMethodExecutionTime) &amp;&amp; @annotation(logFluxMethodExecutionTime)&quot;
+    )
+    public void checkMonoFluxLogCombination(
+        JoinPoint joinPoint,
+        LogMonoMethodExecutionTime logMonoMethodExecutionTime,
+        LogFluxMethodExecutionTime logFluxMethodExecutionTime
+    ) {
+<span class="nc" id="L64">        String methodName = joinPoint.getSignature().getName();</span>
+<span class="nc" id="L65">        String className = joinPoint.getTarget().getClass().getSimpleName();</span>
+
+<span class="nc" id="L67">        throw new DelegateResponseException(</span>
+            &quot;A method Cannot be annotated with @LogMonoMethodExecutionTime and @LogFluxMethodExecutionTime.&quot;,
+            ServerError.ANNOTATION_USAGE_ERROR,
+            &quot;Exception : &quot; +
+<span class="nc" id="L71">            SourcePath.findCurrentPath() +</span>
+            &quot;: Origin : &quot; +
+            className +
+            &quot; -&gt; &quot; +
+            methodName
+        );
+    }
+
+    /***
+     * Forbid combined usage of @OpaPermissionFlux and @LogFluxMethodExecutionTime on methods
+     */
+    @Before(
+        &quot;@annotation(opaPermissionFlux) &amp;&amp; @annotation(logFluxMethodExecutionTime)&quot;
+    )
+    public void checkFluxOpaLogCombination(
+        JoinPoint joinPoint,
+        OpaPermissionFlux opaPermissionFlux,
+        LogFluxMethodExecutionTime logFluxMethodExecutionTime
+    ) {
+<span class="nc" id="L90">        String methodName = joinPoint.getSignature().getName();</span>
+<span class="nc" id="L91">        String className = joinPoint.getTarget().getClass().getSimpleName();</span>
+
+<span class="nc" id="L93">        throw new DelegateResponseException(</span>
+            &quot;A method Cannot be annotated with @OpaPermissionFlux and @LogFluxMethodExecutionTime, use @OpaPermissionFlux instead&quot;,
+            ServerError.ANNOTATION_USAGE_ERROR,
+            &quot;Exception : &quot; +
+<span class="nc" id="L97">            SourcePath.findCurrentPath() +</span>
+            &quot;: Origin : &quot; +
+            className +
+            &quot; -&gt; &quot; +
+            methodName
+        );
+    }
+
+    /***
+     * Forbid combined usage of @OpaPermissionMono and @LogFluxMethodExecutionTime on methods
+     */
+    @Before(
+        &quot;@annotation(opaPermissionMono) &amp;&amp; @annotation(logFluxMethodExecutionTime)&quot;
+    )
+    public void checkMonoOpaFluxLogCombination(
+        JoinPoint joinPoint,
+        OpaPermissionMono opaPermissionMono,
+        LogFluxMethodExecutionTime logFluxMethodExecutionTime
+    ) {
+<span class="nc" id="L116">        String methodName = joinPoint.getSignature().getName();</span>
+<span class="nc" id="L117">        String className = joinPoint.getTarget().getClass().getSimpleName();</span>
+
+<span class="nc" id="L119">        throw new DelegateResponseException(</span>
+            &quot;A method Cannot be annotated with @OpaPermissionMono and @LogFluxMethodExecutionTime.&quot;,
+            ServerError.ANNOTATION_USAGE_ERROR,
+            &quot;Exception : &quot; +
+<span class="nc" id="L123">            SourcePath.findCurrentPath() +</span>
+            &quot;: Origin : &quot; +
+            className +
+            &quot; -&gt; &quot; +
+            methodName
+        );
+    }
+
+    /***
+     * Forbid combined usage of @OpaPermissionFlux and @LogMonoMethodExecutionTime on methods
+     */
+    @Before(
+        &quot;@annotation(opaPermissionFlux) &amp;&amp; @annotation(logMonoMethodExecutionTime)&quot;
+    )
+    public void checkFluxOpaMonoLogCombination(
+        JoinPoint joinPoint,
+        OpaPermissionFlux opaPermissionFlux,
+        LogMonoMethodExecutionTime logMonoMethodExecutionTime
+    ) {
+<span class="nc" id="L142">        String methodName = joinPoint.getSignature().getName();</span>
+<span class="nc" id="L143">        String className = joinPoint.getTarget().getClass().getSimpleName();</span>
+
+<span class="nc" id="L145">        throw new DelegateResponseException(</span>
+            &quot;A method Cannot be annotated with @OpaPermissionFlux and @LogMonoMethodExecutionTime.&quot;,
+            ServerError.ANNOTATION_USAGE_ERROR,
+            &quot;Exception : &quot; +
+<span class="nc" id="L149">            SourcePath.findCurrentPath() +</span>
+            &quot;: Origin : &quot; +
+            className +
+            &quot; -&gt; &quot; +
+            methodName
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

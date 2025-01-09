@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiClient.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.client</a> &gt; <span class="el_source">ApiClient.java</span></div><h1>ApiClient.java</h1><pre class="source lang-java linenums">package com.qbitum.template.client;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.openapitools.jackson.nullable.JsonNullableModule;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.InvalidMediaTypeException;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.RequestEntity.BodyBuilder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+import org.springframework.http.client.reactive.ClientHttpRequest;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
+import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
+import java.util.Optional;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TimeZone;
+
+import jakarta.annotation.Nullable;
+
+import java.time.OffsetDateTime;
+
+import com.qbitum.template.client.auth.Authentication;
+import com.qbitum.template.client.auth.HttpBasicAuth;
+import com.qbitum.template.client.auth.HttpBearerAuth;
+import com.qbitum.template.client.auth.ApiKeyAuth;
+
+@jakarta.annotation.Generated(value = &quot;org.openapitools.codegen.languages.JavaClientCodegen&quot;, date = &quot;2025-01-09T15:39:06.395768156+05:30[Asia/Colombo]&quot;)
+public class ApiClient extends JavaTimeFormatter {
+<span class="nc" id="L72">    public enum CollectionFormat {</span>
+<span class="nc" id="L73">        CSV(&quot;,&quot;), TSV(&quot;\t&quot;), SSV(&quot; &quot;), PIPES(&quot;|&quot;), MULTI(null);</span>
+
+        private final String separator;
+<span class="nc" id="L76">        private CollectionFormat(String separator) {</span>
+<span class="nc" id="L77">            this.separator = separator;</span>
+<span class="nc" id="L78">        }</span>
+
+        private String collectionToString(Collection&lt;?&gt; collection) {
+<span class="nc" id="L81">            return StringUtils.collectionToDelimitedString(collection, separator);</span>
+        }
+    }
+
+<span class="nc" id="L85">    private static final String URI_TEMPLATE_ATTRIBUTE = WebClient.class.getName() + &quot;.uriTemplate&quot;;</span>
+
+<span class="nc" id="L87">    private HttpHeaders defaultHeaders = new HttpHeaders();</span>
+<span class="nc" id="L88">    private MultiValueMap&lt;String, String&gt; defaultCookies = new LinkedMultiValueMap&lt;String, String&gt;();</span>
+
+<span class="nc" id="L90">    private String basePath = &quot;http://localhost:4010&quot;;</span>
+
+    private final WebClient webClient;
+    private final DateFormat dateFormat;
+    private final ObjectMapper objectMapper;
+
+    private Map&lt;String, Authentication&gt; authentications;
+
+
+<span class="nc" id="L99">    public ApiClient() {</span>
+<span class="nc" id="L100">        this.dateFormat = createDefaultDateFormat();</span>
+<span class="nc" id="L101">        this.objectMapper = createDefaultObjectMapper(this.dateFormat);</span>
+<span class="nc" id="L102">        this.webClient = buildWebClient(this.objectMapper);</span>
+<span class="nc" id="L103">        this.init();</span>
+<span class="nc" id="L104">    }</span>
+
+    public ApiClient(WebClient webClient) {
+<span class="nc" id="L107">        this(Optional.ofNullable(webClient).orElseGet(() -&gt; buildWebClient()), createDefaultDateFormat());</span>
+<span class="nc" id="L108">    }</span>
+
+    public ApiClient(ObjectMapper mapper, DateFormat format) {
+<span class="nc" id="L111">        this(buildWebClient(mapper.copy()), format);</span>
+<span class="nc" id="L112">    }</span>
+
+    public ApiClient(WebClient webClient, ObjectMapper mapper, DateFormat format) {
+<span class="nc" id="L115">        this(Optional.ofNullable(webClient).orElseGet(() -&gt; buildWebClient(mapper.copy())), format);</span>
+<span class="nc" id="L116">    }</span>
+
+<span class="nc" id="L118">    private ApiClient(WebClient webClient, DateFormat format) {</span>
+<span class="nc" id="L119">        this.webClient = webClient;</span>
+<span class="nc" id="L120">        this.dateFormat = format;</span>
+<span class="nc" id="L121">        this.objectMapper = createDefaultObjectMapper(format);</span>
+<span class="nc" id="L122">        this.init();</span>
+<span class="nc" id="L123">    }</span>
+
+    public static DateFormat createDefaultDateFormat() {
+<span class="nc" id="L126">        DateFormat dateFormat = new RFC3339DateFormat();</span>
+<span class="nc" id="L127">        dateFormat.setTimeZone(TimeZone.getTimeZone(&quot;UTC&quot;));</span>
+<span class="nc" id="L128">        return dateFormat;</span>
+    }
+
+    public static ObjectMapper createDefaultObjectMapper(@Nullable DateFormat dateFormat) {
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (null == dateFormat) {</span>
+<span class="nc" id="L133">            dateFormat = createDefaultDateFormat();</span>
+        }
+<span class="nc" id="L135">        ObjectMapper mapper = new ObjectMapper();</span>
+<span class="nc" id="L136">        mapper.setDateFormat(dateFormat);</span>
+<span class="nc" id="L137">        mapper.registerModule(new JavaTimeModule());</span>
+<span class="nc" id="L138">        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);</span>
+<span class="nc" id="L139">        JsonNullableModule jnm = new JsonNullableModule();</span>
+<span class="nc" id="L140">        mapper.registerModule(jnm);</span>
+<span class="nc" id="L141">        return mapper;</span>
+    }
+
+    protected void init() {
+        // Setup authentications (key: authentication name, value: authentication).
+<span class="nc" id="L146">        authentications = new HashMap&lt;String, Authentication&gt;();</span>
+        // Prevent the authentications from being modified.
+<span class="nc" id="L148">        authentications = Collections.unmodifiableMap(authentications);</span>
+<span class="nc" id="L149">    }</span>
+
+    /**
+    * Build the WebClientBuilder used to make WebClient.
+    * @param mapper ObjectMapper used for serialize/deserialize
+    * @return WebClient
+    */
+    public static WebClient.Builder buildWebClientBuilder(ObjectMapper mapper) {
+        ExchangeStrategies strategies = ExchangeStrategies
+<span class="nc" id="L158">            .builder()</span>
+<span class="nc" id="L159">            .codecs(clientDefaultCodecsConfigurer -&gt; {</span>
+<span class="nc" id="L160">                clientDefaultCodecsConfigurer.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(mapper, MediaType.APPLICATION_JSON));</span>
+<span class="nc" id="L161">                clientDefaultCodecsConfigurer.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(mapper, MediaType.APPLICATION_JSON));</span>
+<span class="nc" id="L162">            }).build();</span>
+<span class="nc" id="L163">        WebClient.Builder webClientBuilder = WebClient.builder().exchangeStrategies(strategies);</span>
+<span class="nc" id="L164">        return webClientBuilder;</span>
+    }
+
+    /**
+     * Build the WebClientBuilder used to make WebClient.
+     * @return WebClient
+     */
+    public static WebClient.Builder buildWebClientBuilder() {
+<span class="nc" id="L172">        return buildWebClientBuilder(createDefaultObjectMapper(null));</span>
+    }
+
+    /**
+     * Build the WebClient used to make HTTP requests.
+     * @param mapper ObjectMapper used for serialize/deserialize
+     * @return WebClient
+     */
+    public static WebClient buildWebClient(ObjectMapper mapper) {
+<span class="nc" id="L181">        return buildWebClientBuilder(mapper).build();</span>
+    }
+
+    /**
+     * Build the WebClient used to make HTTP requests.
+     * @return WebClient
+     */
+    public static WebClient buildWebClient() {
+<span class="nc" id="L189">        return buildWebClientBuilder(createDefaultObjectMapper(null)).build();</span>
+    }
+
+    /**
+     * Get the current base path
+     * @return String the base path
+     */
+    public String getBasePath() {
+<span class="nc" id="L197">        return basePath;</span>
+    }
+
+    /**
+     * Set the base path, which should include the host
+     * @param basePath the base path
+     * @return ApiClient this client
+     */
+    public ApiClient setBasePath(String basePath) {
+<span class="nc" id="L206">        this.basePath = basePath;</span>
+<span class="nc" id="L207">        return this;</span>
+    }
+
+    /**
+     * Get authentications (key: authentication name, value: authentication).
+     * @return Map the currently configured authentication types
+     */
+    public Map&lt;String, Authentication&gt; getAuthentications() {
+<span class="nc" id="L215">        return authentications;</span>
+    }
+
+    /**
+     * Get authentication for the given name.
+     *
+     * @param authName The authentication name
+     * @return The authentication, null if not found
+     */
+    public Authentication getAuthentication(String authName) {
+<span class="nc" id="L225">        return authentications.get(authName);</span>
+    }
+
+    /**
+     * Helper method to set access token for the first Bearer authentication.
+     * @param bearerToken Bearer token
+     */
+    public void setBearerToken(String bearerToken) {
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        for (Authentication auth : authentications.values()) {</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">            if (auth instanceof HttpBearerAuth) {</span>
+<span class="nc" id="L235">                ((HttpBearerAuth) auth).setBearerToken(bearerToken);</span>
+<span class="nc" id="L236">                return;</span>
+            }
+<span class="nc" id="L238">        }</span>
+<span class="nc" id="L239">        throw new RuntimeException(&quot;No Bearer authentication configured!&quot;);</span>
+    }
+
+    /**
+     * Helper method to set username for the first HTTP basic authentication.
+     * @param username the username
+     */
+    public void setUsername(String username) {
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        for (Authentication auth : authentications.values()) {</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">            if (auth instanceof HttpBasicAuth) {</span>
+<span class="nc" id="L249">                ((HttpBasicAuth) auth).setUsername(username);</span>
+<span class="nc" id="L250">                return;</span>
+            }
+<span class="nc" id="L252">        }</span>
+<span class="nc" id="L253">        throw new RuntimeException(&quot;No HTTP basic authentication configured!&quot;);</span>
+    }
+
+    /**
+     * Helper method to set password for the first HTTP basic authentication.
+     * @param password the password
+     */
+    public void setPassword(String password) {
+<span class="nc bnc" id="L261" title="All 2 branches missed.">        for (Authentication auth : authentications.values()) {</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">            if (auth instanceof HttpBasicAuth) {</span>
+<span class="nc" id="L263">                ((HttpBasicAuth) auth).setPassword(password);</span>
+<span class="nc" id="L264">                return;</span>
+            }
+<span class="nc" id="L266">        }</span>
+<span class="nc" id="L267">        throw new RuntimeException(&quot;No HTTP basic authentication configured!&quot;);</span>
+    }
+
+    /**
+     * Helper method to set API key value for the first API key authentication.
+     * @param apiKey the API key
+     */
+    public void setApiKey(String apiKey) {
+<span class="nc bnc" id="L275" title="All 2 branches missed.">        for (Authentication auth : authentications.values()) {</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">            if (auth instanceof ApiKeyAuth) {</span>
+<span class="nc" id="L277">                ((ApiKeyAuth) auth).setApiKey(apiKey);</span>
+<span class="nc" id="L278">                return;</span>
+            }
+<span class="nc" id="L280">        }</span>
+<span class="nc" id="L281">        throw new RuntimeException(&quot;No API key authentication configured!&quot;);</span>
+    }
+
+    /**
+     * Helper method to set API key prefix for the first API key authentication.
+     * @param apiKeyPrefix the API key prefix
+     */
+    public void setApiKeyPrefix(String apiKeyPrefix) {
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        for (Authentication auth : authentications.values()) {</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">            if (auth instanceof ApiKeyAuth) {</span>
+<span class="nc" id="L291">                ((ApiKeyAuth) auth).setApiKeyPrefix(apiKeyPrefix);</span>
+<span class="nc" id="L292">                return;</span>
+            }
+<span class="nc" id="L294">        }</span>
+<span class="nc" id="L295">        throw new RuntimeException(&quot;No API key authentication configured!&quot;);</span>
+    }
+
+    /**
+     * Set the User-Agent header's value (by adding to the default header map).
+     * @param userAgent the user agent string
+     * @return ApiClient this client
+     */
+    public ApiClient setUserAgent(String userAgent) {
+<span class="nc" id="L304">        addDefaultHeader(&quot;User-Agent&quot;, userAgent);</span>
+<span class="nc" id="L305">        return this;</span>
+    }
+
+    /**
+     * Add a default header.
+     *
+     * @param name The header's name
+     * @param value The header's value
+     * @return ApiClient this client
+     */
+    public ApiClient addDefaultHeader(String name, String value) {
+<span class="nc bnc" id="L316" title="All 2 branches missed.">        if (defaultHeaders.containsKey(name)) {</span>
+<span class="nc" id="L317">            defaultHeaders.remove(name);</span>
+        }
+<span class="nc" id="L319">        defaultHeaders.add(name, value);</span>
+<span class="nc" id="L320">        return this;</span>
+    }
+
+    /**
+     * Add a default cookie.
+     *
+     * @param name The cookie's name
+     * @param value The cookie's value
+     * @return ApiClient this client
+     */
+    public ApiClient addDefaultCookie(String name, String value) {
+<span class="nc bnc" id="L331" title="All 2 branches missed.">        if (defaultCookies.containsKey(name)) {</span>
+<span class="nc" id="L332">            defaultCookies.remove(name);</span>
+        }
+<span class="nc" id="L334">        defaultCookies.add(name, value);</span>
+<span class="nc" id="L335">        return this;</span>
+    }
+
+    /**
+     * Get the date format used to parse/format date parameters.
+     * @return DateFormat format
+     */
+    public DateFormat getDateFormat() {
+<span class="nc" id="L343">        return dateFormat;</span>
+    }
+
+    /**
+     * Parse the given string into Date object.
+     */
+    public Date parseDate(String str) {
+        try {
+<span class="nc" id="L351">            return dateFormat.parse(str);</span>
+<span class="nc" id="L352">        } catch (ParseException e) {</span>
+<span class="nc" id="L353">            throw new RuntimeException(e);</span>
+        }
+    }
+
+    /**
+     * Format the given Date object into string.
+     */
+    public String formatDate(Date date) {
+<span class="nc" id="L361">        return dateFormat.format(date);</span>
+    }
+
+    /**
+     * Get the ObjectMapper used to make HTTP requests.
+     * @return ObjectMapper objectMapper
+     */
+    public ObjectMapper getObjectMapper() {
+<span class="nc" id="L369">        return objectMapper;</span>
+    }
+
+    /**
+     * Get the WebClient used to make HTTP requests.
+     * @return WebClient webClient
+     */
+    public WebClient getWebClient() {
+<span class="nc" id="L377">        return webClient;</span>
+    }
+
+    /**
+     * Format the given parameter object into string.
+     * @param param the object to convert
+     * @return String the parameter represented as a String
+     */
+    public String parameterToString(Object param) {
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        if (param == null) {</span>
+<span class="nc" id="L387">            return &quot;&quot;;</span>
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        } else if (param instanceof Date) {</span>
+<span class="nc" id="L389">            return formatDate( (Date) param);</span>
+<span class="nc bnc" id="L390" title="All 2 branches missed.">        } else if (param instanceof OffsetDateTime) {</span>
+<span class="nc" id="L391">            return formatOffsetDateTime((OffsetDateTime) param);</span>
+<span class="nc bnc" id="L392" title="All 2 branches missed.">        } else if (param instanceof Collection) {</span>
+<span class="nc" id="L393">            StringBuilder b = new StringBuilder();</span>
+<span class="nc bnc" id="L394" title="All 2 branches missed.">            for(Object o : (Collection&lt;?&gt;) param) {</span>
+<span class="nc bnc" id="L395" title="All 2 branches missed.">                if(b.length() &gt; 0) {</span>
+<span class="nc" id="L396">                    b.append(&quot;,&quot;);</span>
+                }
+<span class="nc" id="L398">                b.append(String.valueOf(o));</span>
+<span class="nc" id="L399">            }</span>
+<span class="nc" id="L400">            return b.toString();</span>
+        } else {
+<span class="nc" id="L402">            return String.valueOf(param);</span>
+        }
+    }
+
+    /**
+     * Converts a parameter to a {@link MultiValueMap} for use in REST requests
+     * @param collectionFormat The format to convert to
+     * @param name The name of the parameter
+     * @param value The parameter's value
+     * @return a Map containing the String value(s) of the input parameter
+     */
+    public MultiValueMap&lt;String, String&gt; parameterToMultiValueMap(CollectionFormat collectionFormat, String name, Object value) {
+<span class="nc" id="L414">        final MultiValueMap&lt;String, String&gt; params = new LinkedMultiValueMap&lt;String, String&gt;();</span>
+
+<span class="nc bnc" id="L416" title="All 6 branches missed.">        if (name == null || name.isEmpty() || value == null) {</span>
+<span class="nc" id="L417">            return params;</span>
+        }
+
+<span class="nc bnc" id="L420" title="All 2 branches missed.">        if(collectionFormat == null) {</span>
+<span class="nc" id="L421">            collectionFormat = CollectionFormat.CSV;</span>
+        }
+
+<span class="nc bnc" id="L424" title="All 2 branches missed.">        if (value instanceof Map) {</span>
+            @SuppressWarnings(&quot;unchecked&quot;)
+<span class="nc" id="L426">            final Map&lt;String, Object&gt; valuesMap = (Map&lt;String, Object&gt;) value;</span>
+<span class="nc bnc" id="L427" title="All 2 branches missed.">            for (final Entry&lt;String, Object&gt; entry : valuesMap.entrySet()) {</span>
+<span class="nc" id="L428">                params.add(entry.getKey(), parameterToString(entry.getValue()));</span>
+<span class="nc" id="L429">            }</span>
+<span class="nc" id="L430">            return params;</span>
+        }
+
+<span class="nc" id="L433">        Collection&lt;?&gt; valueCollection = null;</span>
+<span class="nc bnc" id="L434" title="All 2 branches missed.">        if (value instanceof Collection) {</span>
+<span class="nc" id="L435">            valueCollection = (Collection&lt;?&gt;) value;</span>
+        } else {
+<span class="nc" id="L437">            params.add(name, parameterToString(value));</span>
+<span class="nc" id="L438">            return params;</span>
+        }
+
+<span class="nc bnc" id="L441" title="All 2 branches missed.">        if (valueCollection.isEmpty()){</span>
+<span class="nc" id="L442">            return params;</span>
+        }
+
+<span class="nc bnc" id="L445" title="All 2 branches missed.">        if (collectionFormat.equals(CollectionFormat.MULTI)) {</span>
+<span class="nc bnc" id="L446" title="All 2 branches missed.">            for (Object item : valueCollection) {</span>
+<span class="nc" id="L447">                params.add(name, parameterToString(item));</span>
+<span class="nc" id="L448">            }</span>
+<span class="nc" id="L449">            return params;</span>
+        }
+
+<span class="nc" id="L452">        List&lt;String&gt; values = new ArrayList&lt;String&gt;();</span>
+<span class="nc bnc" id="L453" title="All 2 branches missed.">        for(Object o : valueCollection) {</span>
+<span class="nc" id="L454">            values.add(parameterToString(o));</span>
+<span class="nc" id="L455">        }</span>
+<span class="nc" id="L456">        params.add(name, collectionFormat.collectionToString(values));</span>
+
+<span class="nc" id="L458">        return params;</span>
+    }
+
+    /**
+    * Check if the given {@code String} is a JSON MIME.
+    * @param mediaType the input MediaType
+    * @return boolean true if the MediaType represents JSON, false otherwise
+    */
+    public boolean isJsonMime(String mediaType) {
+        // &quot;* / *&quot; is default to JSON
+<span class="nc bnc" id="L468" title="All 2 branches missed.">        if (&quot;*/*&quot;.equals(mediaType)) {</span>
+<span class="nc" id="L469">            return true;</span>
+        }
+
+        try {
+<span class="nc" id="L473">            return isJsonMime(MediaType.parseMediaType(mediaType));</span>
+<span class="nc" id="L474">        } catch (InvalidMediaTypeException e) {</span>
+        }
+<span class="nc" id="L476">        return false;</span>
+    }
+
+    /**
+     * Check if the given MIME is a JSON MIME.
+     * JSON MIME examples:
+     *     application/json
+     *     application/json; charset=UTF8
+     *     APPLICATION/JSON
+     * @param mediaType the input MediaType
+     * @return boolean true if the MediaType represents JSON, false otherwise
+     */
+    public boolean isJsonMime(MediaType mediaType) {
+<span class="nc bnc" id="L489" title="All 6 branches missed.">        return mediaType != null &amp;&amp; (MediaType.APPLICATION_JSON.isCompatibleWith(mediaType) || mediaType.getSubtype().matches(&quot;^.*(\\+json|ndjson)[;]?\\s*$&quot;));</span>
+    }
+
+    /**
+    * Check if the given {@code String} is a Problem JSON MIME (RFC-7807).
+    * @param mediaType the input MediaType
+    * @return boolean true if the MediaType represents Problem JSON, false otherwise
+    */
+    public boolean isProblemJsonMime(String mediaType) {
+<span class="nc" id="L498">        return &quot;application/problem+json&quot;.equalsIgnoreCase(mediaType);</span>
+    }
+
+    /**
+     * Select the Accept header's value from the given accepts array:
+     *     if JSON exists in the given array, use it;
+     *     otherwise use all of them (joining into a string)
+     *
+     * @param accepts The accepts array to select from
+     * @return List The list of MediaTypes to use for the Accept header
+     */
+    public List&lt;MediaType&gt; selectHeaderAccept(String[] accepts) {
+<span class="nc bnc" id="L510" title="All 2 branches missed.">        if (accepts.length == 0) {</span>
+<span class="nc" id="L511">            return null;</span>
+        }
+<span class="nc bnc" id="L513" title="All 2 branches missed.">        for (String accept : accepts) {</span>
+<span class="nc" id="L514">            MediaType mediaType = MediaType.parseMediaType(accept);</span>
+<span class="nc bnc" id="L515" title="All 4 branches missed.">            if (isJsonMime(mediaType) &amp;&amp; !isProblemJsonMime(accept)) {</span>
+<span class="nc" id="L516">                return Collections.singletonList(mediaType);</span>
+            }
+        }
+<span class="nc" id="L519">        return MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(accepts));</span>
+    }
+
+    /**
+     * Select the Content-Type header's value from the given array:
+     *     if JSON exists in the given array, use it;
+     *     otherwise use the first one of the array.
+     *
+     * @param contentTypes The Content-Type array to select from
+     * @return MediaType The Content-Type header to use. If the given array is empty, null will be returned.
+     */
+    public MediaType selectHeaderContentType(String[] contentTypes) {
+<span class="nc bnc" id="L531" title="All 2 branches missed.">        if (contentTypes.length == 0) {</span>
+<span class="nc" id="L532">            return null;</span>
+        }
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        for (String contentType : contentTypes) {</span>
+<span class="nc" id="L535">            MediaType mediaType = MediaType.parseMediaType(contentType);</span>
+<span class="nc bnc" id="L536" title="All 2 branches missed.">            if (isJsonMime(mediaType)) {</span>
+<span class="nc" id="L537">                return mediaType;</span>
+            }
+        }
+<span class="nc" id="L540">        return MediaType.parseMediaType(contentTypes[0]);</span>
+    }
+
+    /**
+     * Select the body to use for the request
+     * @param obj the body object
+     * @param formParams the form parameters
+     * @param contentType the content type of the request
+     * @return Object the selected body
+     */
+    protected BodyInserter&lt;?, ? super ClientHttpRequest&gt; selectBody(Object obj, MultiValueMap&lt;String, Object&gt; formParams, MediaType contentType) {
+<span class="nc bnc" id="L551" title="All 2 branches missed.">        if(MediaType.APPLICATION_FORM_URLENCODED.equals(contentType)) {</span>
+<span class="nc" id="L552">            MultiValueMap&lt;String, String&gt; map = new LinkedMultiValueMap&lt;&gt;();</span>
+
+<span class="nc" id="L554">            formParams</span>
+<span class="nc" id="L555">                    .toSingleValueMap()</span>
+<span class="nc" id="L556">                    .entrySet()</span>
+<span class="nc" id="L557">                    .forEach(es -&gt; map.add(es.getKey(), String.valueOf(es.getValue())));</span>
+
+<span class="nc" id="L559">            return BodyInserters.fromFormData(map);</span>
+<span class="nc bnc" id="L560" title="All 2 branches missed.">        } else if(MediaType.MULTIPART_FORM_DATA.equals(contentType)) {</span>
+<span class="nc" id="L561">            return BodyInserters.fromMultipartData(formParams);</span>
+        } else {
+<span class="nc bnc" id="L563" title="All 2 branches missed.">            return obj != null ? BodyInserters.fromValue(obj) : null;</span>
+        }
+    }
+
+    /**
+     * Invoke API by sending HTTP request with the given options.
+     *
+     * @param &lt;T&gt; the return type to use
+     * @param path The sub-path of the HTTP URL
+     * @param method The request method
+     * @param pathParams The path parameters
+     * @param queryParams The query parameters
+     * @param body The request body object
+     * @param headerParams The header parameters
+     * @param formParams The form parameters
+     * @param accept The request's Accept header
+     * @param contentType The request's Content-Type header
+     * @param authNames The authentications to apply
+     * @param returnType The return type into which to deserialize the response
+     * @return The response body in chosen type
+     */
+    public &lt;T&gt; ResponseSpec invokeAPI(String path, HttpMethod method, Map&lt;String, Object&gt; pathParams, MultiValueMap&lt;String, String&gt; queryParams, Object body, HttpHeaders headerParams, MultiValueMap&lt;String, String&gt; cookieParams, MultiValueMap&lt;String, Object&gt; formParams, List&lt;MediaType&gt; accept, MediaType contentType, String[] authNames, ParameterizedTypeReference&lt;T&gt; returnType) throws RestClientException {
+<span class="nc" id="L585">        final WebClient.RequestBodySpec requestBuilder = prepareRequest(path, method, pathParams, queryParams, body, headerParams, cookieParams, formParams, accept, contentType, authNames);</span>
+<span class="nc" id="L586">        return requestBuilder.retrieve();</span>
+    }
+
+    /**
+     * Include queryParams in uriParams taking into account the paramName
+     * @param queryParams The query parameters
+     * @param uriParams The path parameters
+     * return templatized query string
+     */
+    private String generateQueryUri(MultiValueMap&lt;String, String&gt; queryParams, Map&lt;String, Object&gt; uriParams) {
+<span class="nc" id="L596">        StringBuilder queryBuilder = new StringBuilder();</span>
+<span class="nc" id="L597">        queryParams.forEach((name, values) -&gt; {</span>
+<span class="nc bnc" id="L598" title="All 2 branches missed.">            if (CollectionUtils.isEmpty(values)) {</span>
+<span class="nc bnc" id="L599" title="All 2 branches missed.">                if (queryBuilder.length() != 0) {</span>
+<span class="nc" id="L600">                    queryBuilder.append('&amp;');</span>
+                }
+<span class="nc" id="L602">                queryBuilder.append(name);</span>
+            } else {
+<span class="nc" id="L604">                int valueItemCounter = 0;</span>
+<span class="nc bnc" id="L605" title="All 2 branches missed.">                for (Object value : values) {</span>
+<span class="nc bnc" id="L606" title="All 2 branches missed.">                    if (queryBuilder.length() != 0) {</span>
+<span class="nc" id="L607">                        queryBuilder.append('&amp;');</span>
+                    }
+<span class="nc" id="L609">                    queryBuilder.append(name);</span>
+<span class="nc bnc" id="L610" title="All 2 branches missed.">                    if (value != null) {</span>
+<span class="nc" id="L611">                        String templatizedKey = name + valueItemCounter++;</span>
+<span class="nc" id="L612">                        uriParams.put(templatizedKey, value.toString());</span>
+<span class="nc" id="L613">                        queryBuilder.append('=').append(&quot;{&quot;).append(templatizedKey).append(&quot;}&quot;);</span>
+                    }
+<span class="nc" id="L615">                }</span>
+            }
+<span class="nc" id="L617">        });</span>
+<span class="nc" id="L618">        return queryBuilder.toString();</span>
+    }
+
+    private WebClient.RequestBodySpec prepareRequest(String path, HttpMethod method, Map&lt;String, Object&gt; pathParams,
+        MultiValueMap&lt;String, String&gt; queryParams, Object body, HttpHeaders headerParams,
+        MultiValueMap&lt;String, String&gt; cookieParams, MultiValueMap&lt;String, Object&gt; formParams, List&lt;MediaType&gt; accept,
+        MediaType contentType, String[] authNames) {
+<span class="nc" id="L625">        updateParamsForAuth(authNames, queryParams, headerParams, cookieParams);</span>
+
+<span class="nc" id="L627">        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(basePath).path(path);</span>
+
+<span class="nc" id="L629">        String finalUri = builder.build(false).toUriString();</span>
+<span class="nc" id="L630">        Map&lt;String, Object&gt; uriParams = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L631">        uriParams.putAll(pathParams);</span>
+
+<span class="nc bnc" id="L633" title="All 4 branches missed.">        if (queryParams != null &amp;&amp; !queryParams.isEmpty()) {</span>
+            //Include queryParams in uriParams taking into account the paramName
+<span class="nc" id="L635">            String queryUri = generateQueryUri(queryParams, uriParams);</span>
+            //Append to finalUri the templatized query string like &quot;?param1={param1Value}&amp;.......
+<span class="nc" id="L637">            finalUri += &quot;?&quot; + queryUri;</span>
+        }
+
+<span class="nc" id="L640">        final WebClient.RequestBodySpec requestBuilder = webClient.method(method).uri(finalUri, uriParams);</span>
+
+<span class="nc bnc" id="L642" title="All 2 branches missed.">        if (accept != null) {</span>
+<span class="nc" id="L643">            requestBuilder.accept(accept.toArray(new MediaType[accept.size()]));</span>
+        }
+<span class="nc bnc" id="L645" title="All 2 branches missed.">        if(contentType != null) {</span>
+<span class="nc" id="L646">            requestBuilder.contentType(contentType);</span>
+        }
+
+<span class="nc" id="L649">        addHeadersToRequest(headerParams, requestBuilder);</span>
+<span class="nc" id="L650">        addHeadersToRequest(defaultHeaders, requestBuilder);</span>
+<span class="nc" id="L651">        addCookiesToRequest(cookieParams, requestBuilder);</span>
+<span class="nc" id="L652">        addCookiesToRequest(defaultCookies, requestBuilder);</span>
+
+<span class="nc" id="L654">        requestBuilder.attribute(URI_TEMPLATE_ATTRIBUTE, path);</span>
+
+<span class="nc" id="L656">        requestBuilder.body(selectBody(body, formParams, contentType));</span>
+<span class="nc" id="L657">        return requestBuilder;</span>
+    }
+
+    /**
+     * Add headers to the request that is being built
+     * @param headers The headers to add
+     * @param requestBuilder The current request
+     */
+    protected void addHeadersToRequest(HttpHeaders headers, WebClient.RequestBodySpec requestBuilder) {
+<span class="nc bnc" id="L666" title="All 2 branches missed.">        for (Entry&lt;String, List&lt;String&gt;&gt; entry : headers.entrySet()) {</span>
+<span class="nc" id="L667">            List&lt;String&gt; values = entry.getValue();</span>
+<span class="nc bnc" id="L668" title="All 2 branches missed.">            for(String value : values) {</span>
+<span class="nc bnc" id="L669" title="All 2 branches missed.">                if (value != null) {</span>
+<span class="nc" id="L670">                    requestBuilder.header(entry.getKey(), value);</span>
+                }
+<span class="nc" id="L672">            }</span>
+<span class="nc" id="L673">        }</span>
+<span class="nc" id="L674">    }</span>
+
+    /**
+     * Add cookies to the request that is being built
+     * @param cookies The cookies to add
+     * @param requestBuilder The current request
+     */
+    protected void addCookiesToRequest(MultiValueMap&lt;String, String&gt; cookies, WebClient.RequestBodySpec requestBuilder) {
+<span class="nc bnc" id="L682" title="All 2 branches missed.">        for (Entry&lt;String, List&lt;String&gt;&gt; entry : cookies.entrySet()) {</span>
+<span class="nc" id="L683">            List&lt;String&gt; values = entry.getValue();</span>
+<span class="nc bnc" id="L684" title="All 2 branches missed.">            for(String value : values) {</span>
+<span class="nc bnc" id="L685" title="All 2 branches missed.">                if (value != null) {</span>
+<span class="nc" id="L686">                    requestBuilder.cookie(entry.getKey(), value);</span>
+                }
+<span class="nc" id="L688">            }</span>
+<span class="nc" id="L689">        }</span>
+<span class="nc" id="L690">    }</span>
+
+    /**
+     * Update query and header parameters based on authentication settings.
+     *
+     * @param authNames The authentications to apply
+     * @param queryParams The query parameters
+     * @param headerParams The header parameters
+     * @param cookieParams the cookie parameters
+     */
+    protected void updateParamsForAuth(String[] authNames, MultiValueMap&lt;String, String&gt; queryParams, HttpHeaders headerParams, MultiValueMap&lt;String, String&gt; cookieParams) {
+<span class="nc bnc" id="L701" title="All 2 branches missed.">        for (String authName : authNames) {</span>
+<span class="nc" id="L702">            Authentication auth = authentications.get(authName);</span>
+<span class="nc bnc" id="L703" title="All 2 branches missed.">            if (auth == null) {</span>
+<span class="nc" id="L704">                throw new RestClientException(&quot;Authentication undefined: &quot; + authName);</span>
+            }
+<span class="nc" id="L706">            auth.applyToParams(queryParams, headerParams, cookieParams);</span>
+        }
+<span class="nc" id="L708">    }</span>
+
+    /**
+    * Formats the specified collection path parameter to a string value.
+    *
+    * @param collectionFormat The collection format of the parameter.
+    * @param values The values of the parameter.
+    * @return String representation of the parameter
+    */
+    public String collectionPathParameterToString(CollectionFormat collectionFormat, Collection&lt;?&gt; values) {
+        // create the value based on the collection format
+<span class="nc bnc" id="L719" title="All 2 branches missed.">        if (CollectionFormat.MULTI.equals(collectionFormat)) {</span>
+            // not valid for path params
+<span class="nc" id="L721">            return parameterToString(values);</span>
+        }
+
+         // collectionFormat is assumed to be &quot;csv&quot; by default
+<span class="nc bnc" id="L725" title="All 2 branches missed.">        if(collectionFormat == null) {</span>
+<span class="nc" id="L726">            collectionFormat = CollectionFormat.CSV;</span>
+        }
+
+<span class="nc" id="L729">        return collectionFormat.collectionToString(values);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TemplateSampleDelegateV1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.delegate.v1</a> &gt; <span class="el_source">TemplateSampleDelegateV1.java</span></div><h1>TemplateSampleDelegateV1.java</h1><pre class="source lang-java linenums">package com.qbitum.template.delegate.v1;
+
+import com.qbitum.template.annotations.LogMethodParams;
+import com.qbitum.template.annotations.LogMonoMethodExecutionTime;
+import com.qbitum.template.exception.DelegateResponseException;
+import com.qbitum.template.exception.enums.ServerError;
+import com.qbitum.template.server.api.V1ApiDelegate;
+import com.qbitum.template.server.model.SampleData;
+import com.qbitum.template.server.model.SampleRequest;
+import com.qbitum.template.server.model.SampleResponse;
+import com.qbitum.template.service.impl.SampleServiceImpl;
+import com.qbitum.template.utility.ReadJwt;
+import com.qbitum.template.utility.SourcePath;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+@Service
+<span class="fc" id="L25">@Slf4j</span>
+<span class="fc" id="L26">public class TemplateSampleDelegateV1 implements V1ApiDelegate {</span>
+    @Autowired
+    private SampleServiceImpl sampleService;
+
+    /***
+     * Sample delegate implementation to demonstrate use of OpenApi generator with different params and use of annotations
+     *
+     * @param authorization Bearer Token for Authorization (required)
+     * @param xClientId client ID (required)
+     * @param id1  (required)
+     * @param id2  (required)
+     * @param id3  (required)
+     * @param exchange
+     * @return
+     */
+    @Override
+    @LogMonoMethodExecutionTime
+    @LogMethodParams
+    public Mono&lt;ResponseEntity&lt;SampleResponse&gt;&gt; sampleTemplateGetApi(
+        String authorization,
+        String xClientId,
+        String id1,
+        String id2,
+        String id3,
+        ServerWebExchange exchange
+    ) {
+<span class="nc" id="L52">        List&lt;SampleData&gt; sampleDataList = Arrays.asList(</span>
+            new SampleData(id1, id2, id3),
+            new SampleData(id2, id2, id3)
+        );
+
+        // Use the parseJWT method in the ReadJwt utility &quot;ReadJwt.parseJWT()&quot; class to decode a jwt and get user data
+<span class="nc" id="L58">        SampleResponse response = new SampleResponse(</span>
+<span class="nc" id="L59">            ReadJwt.parseJWT(authorization).get(&quot;sub&quot;).toString(),</span>
+            &quot;This is a Sample Response with response status : OK&quot;,
+            sampleDataList
+        );
+
+<span class="nc" id="L64">        log.debug(&quot;Response body : {}&quot;, response);</span>
+<span class="nc" id="L65">        return Mono</span>
+<span class="nc" id="L66">            .just(ResponseEntity.ok(response))</span>
+<span class="nc" id="L67">            .doOnError(</span>
+                error -&gt; {
+<span class="nc" id="L69">                    throw new DelegateResponseException(error);</span>
+                }
+            );
+    }
+
+    /***
+     * Sample delegate implementation to demonstrate use of OpenApi generator post api
+     *
+     * @param authorization Bearer Token for Authorization (required)
+     * @param xClientId client ID (required)
+     * @param sampleRequest  (required)
+     * @param exchange
+     * @return
+     */
+    @Override
+    @LogMonoMethodExecutionTime
+    @LogMethodParams
+    public Mono&lt;ResponseEntity&lt;SampleResponse&gt;&gt; sampleTemplatePostApi(
+        String authorization,
+        String xClientId,
+        Mono&lt;SampleRequest&gt; sampleRequest,
+        ServerWebExchange exchange
+    ) {
+<span class="nc" id="L92">        return sampleRequest</span>
+<span class="nc" id="L93">            .flatMap(</span>
+                sampleRequestValue -&gt; {
+<span class="nc" id="L95">                    log.info(&quot;Request body object : {}&quot;, sampleRequestValue);</span>
+<span class="nc" id="L96">                    List&lt;SampleData&gt; sampleDataList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">                    for (SampleData listObject : sampleRequestValue.getIdList()) {</span>
+<span class="nc" id="L98">                        sampleDataList.add(</span>
+                            new SampleData(
+<span class="nc" id="L100">                                listObject.getId1(),</span>
+<span class="nc" id="L101">                                listObject.getId2(),</span>
+<span class="nc" id="L102">                                listObject.getId3()</span>
+                            )
+                        );
+<span class="nc" id="L105">                    }</span>
+
+                    // Use the parseJWT method in the ReadJwt utility class to decode a jwt and get user data
+<span class="nc" id="L108">                    SampleResponse response = new SampleResponse(</span>
+<span class="nc" id="L109">                        ReadJwt.parseJWT(authorization).get(&quot;sub&quot;).toString(),</span>
+                        &quot;This is a Sample Response with data list received&quot;,
+                        sampleDataList
+                    );
+<span class="nc" id="L113">                    response.setCode(201);</span>
+<span class="nc" id="L114">                    log.debug(&quot;Response body : {}&quot;, response);</span>
+                    //  Try sending 500 as 'number' in the request body to view an example of exception handling
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                    if (sampleRequestValue.getNumber() == 500) {</span>
+<span class="nc" id="L117">                        throw new DelegateResponseException(</span>
+                            &quot;Demo Delegate exception&quot;,
+                            ServerError.ERROR_UNDEFINED,
+<span class="nc" id="L120">                            SourcePath.findCurrentPath()</span>
+                        );
+                    }
+<span class="nc" id="L123">                    return Mono.just(ResponseEntity.status(201).body(response));</span>
+                }
+            )
+<span class="nc" id="L126">            .doOnError(</span>
+                error -&gt; {
+<span class="nc" id="L128">                    throw new DelegateResponseException(error);</span>
+                }
+            );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

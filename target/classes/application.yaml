@@ -1,0 +1,103 @@
+# common service properties for all environments
+# can be overridden
+server:
+  port: 9000
+
+spring:
+  application:
+    name: template-service
+  cloud:
+    discovery:
+      enabled: false
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/rest-crud
+    username: restcrud
+    password: restcrud
+auth:
+  opaUrl: http://localhost:1234/v1/data/
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:9502/eureka/
+
+spring.cloud.config.import-check.enabled: false
+spring.zipkin.enabled: false
+
+springdoc:
+  version: openapi_3_1
+  swagger-ui:
+    path: "swagger-ui-custom.html"
+
+management.endpoints.web.exposure.include: "*"
+management.endpoints.health.show-details: "always"
+management:
+  tracing:
+    sampling:
+      probability: 0.0
+    enabled: false
+  endpoint:
+    restart:
+      enabled: true
+
+sample:
+  name: "Test"
+  message: "Hello Developer !"
+
+logging:
+  level:
+    com.qbitum.templateservice: DEBUG
+#  file:
+#    name: ${HOME}/Public/${spring.application.name}/Logs/${spring.application.name}.log
+#    max-size: 12KB           # size for a single file
+#    max-history: 7          # archived by days, default value = 7
+#    total-size-cap: 40KB    # size of all log files
+#    clean-history-on-start: true
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%X{traceId:-},%X{spanId:-}] ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%X{traceId:-},%X{spanId:-}] ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+#    rolling-file-name: ${HOME}/Public/${spring.application.name}/Logs/${spring.application.name}-%d{yyyy-MM-dd}.%d{HH-mm-ss}.%i.log
+#    archive-file-name: ${HOME}/Public/${spring.application.name}/Logs/${spring.application.name}-%d{yyyy-MM-dd}.%d{HH-mm-ss}.%i.log.gz
+
+---
+# properties for DEV environment
+# running on "dev" profile only
+spring:
+  application:
+    name: template-service
+  config:
+    activate:
+      on-profile: dev
+    import: "optional:configserver:http://localhost:9071"
+
+---
+# properties for QA environment
+# running on "qa" profile only
+spring:
+  application:
+    name: template-service
+  config:
+    activate:
+      on-profile: qa
+    import: "optional:configserver:http://localhost:9071"
+
+---
+# properties for Production environment
+# running on "prod" profile only
+spring:
+  application:
+    name: template-service
+  config:
+    activate:
+      on-profile: prod
+    import: "optional:configserver:http://localhost:9071"
+
+---
+
+# properties for docker profile
+# running on "qa" profile only
+spring:
+  config:
+    import: "optional:configserver:http://localhost:9071"
+    activate:
+      on-profile: docker

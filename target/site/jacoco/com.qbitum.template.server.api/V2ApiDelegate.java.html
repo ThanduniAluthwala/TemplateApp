@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>V2ApiDelegate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.server.api</a> &gt; <span class="el_source">V2ApiDelegate.java</span></div><h1>V2ApiDelegate.java</h1><pre class="source lang-java linenums">package com.qbitum.template.server.api;
+
+import com.qbitum.template.server.model.SampleResponse;
+import com.qbitum.template.server.model.ServerErrorResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import org.springframework.http.codec.multipart.Part;
+
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import jakarta.annotation.Generated;
+
+/**
+ * A delegate to be called by the {@link V2ApiController}}.
+ * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
+ */
+@Generated(value = &quot;org.openapitools.codegen.languages.SpringCodegen&quot;, date = &quot;2025-01-09T15:39:05.889641620+05:30[Asia/Colombo]&quot;)
+public interface V2ApiDelegate {
+
+    default Optional&lt;NativeWebRequest&gt; getRequest() {
+<span class="nc" id="L30">        return Optional.empty();</span>
+    }
+
+    /**
+     * GET /v2/sampleTemplate/getData : Sample Get Api using openapi generator
+     * Results will be different by product or based on roles of the current logged in user
+     *
+     * @param authorization Bearer Token for Authorization (required)
+     * @param xClientId client ID (required)
+     * @param id3  (required)
+     * @return list of available components (status code 200)
+     *         or Internal server error (status code 500)
+     * @see V2Api#getDataV2
+     */
+    default Mono&lt;ResponseEntity&lt;SampleResponse&gt;&gt; getDataV2(String authorization,
+        String xClientId,
+        String id3,
+        ServerWebExchange exchange) {
+<span class="nc" id="L48">        Mono&lt;Void&gt; result = Mono.empty();</span>
+<span class="nc" id="L49">        exchange.getResponse().setStatusCode(HttpStatus.NOT_IMPLEMENTED);</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        for (MediaType mediaType : exchange.getRequest().getHeaders().getAccept()) {</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">            if (mediaType.isCompatibleWith(MediaType.valueOf(&quot;application/json&quot;))) {</span>
+<span class="nc" id="L52">                String exampleString = &quot;{ \&quot;code\&quot; : 0, \&quot;data\&quot; : [ { \&quot;id2\&quot; : \&quot;id2\&quot;, \&quot;id1\&quot; : \&quot;id1\&quot;, \&quot;id3\&quot; : \&quot;id3\&quot; }, { \&quot;id2\&quot; : \&quot;id2\&quot;, \&quot;id1\&quot; : \&quot;id1\&quot;, \&quot;id3\&quot; : \&quot;id3\&quot; } ], \&quot;message\&quot; : \&quot;message\&quot;, \&quot;userId\&quot; : \&quot;userId\&quot; }&quot;;</span>
+<span class="nc" id="L53">                result = ApiUtil.getExampleResponse(exchange, MediaType.valueOf(&quot;application/json&quot;), exampleString);</span>
+<span class="nc" id="L54">                break;</span>
+            }
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">        return result.then(Mono.empty());</span>
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

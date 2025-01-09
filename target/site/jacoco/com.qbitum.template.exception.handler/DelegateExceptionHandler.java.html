@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DelegateExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.exception.handler</a> &gt; <span class="el_source">DelegateExceptionHandler.java</span></div><h1>DelegateExceptionHandler.java</h1><pre class="source lang-java linenums">package com.qbitum.template.exception.handler;
+
+import com.qbitum.template.exception.DelegateResponseException;
+import com.qbitum.template.exception.enums.ServerError;
+import com.qbitum.template.server.model.ServerErrorResponse;
+import java.util.Arrays;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+<span class="fc" id="L13">@Slf4j</span>
+@ControllerAdvice
+<span class="fc" id="L15">public class DelegateExceptionHandler {</span>
+
+    /***
+     * Handler for throwing delegate level exception as ServerErrorResponse Objects
+     *
+     * @param e The throwable exception
+     * @return returns a Http Response Entity
+     */
+    @ExceptionHandler(value = { DelegateResponseException.class })
+    public ResponseEntity&lt;ServerErrorResponse&gt; handleApiRequestException(
+        DelegateResponseException e
+    ) {
+        // payload with exception details
+
+<span class="nc" id="L29">        ServerErrorResponse serverErrorResponse = new ServerErrorResponse();</span>
+<span class="nc" id="L30">        serverErrorResponse.status(&quot;ERROR&quot;);</span>
+
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        if (e.getServerErrorException() != null) {</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">            if (e.getServerErrorException().getErrorObject() != null) {</span>
+<span class="nc" id="L34">                serverErrorResponse.setCode(</span>
+<span class="nc" id="L35">                    e.getServerErrorException().getErrorObject().getCode()</span>
+                );
+<span class="nc" id="L37">                serverErrorResponse.setMessage(</span>
+<span class="nc" id="L38">                    e.getServerErrorException().getErrorObject().getMessage()</span>
+                );
+<span class="nc" id="L40">                serverErrorResponse.setErrorPath(</span>
+<span class="nc" id="L41">                    e.getServerErrorException().getErrorObject().getErrorPath()</span>
+                );
+<span class="nc" id="L43">                serverErrorResponse.setDescription(</span>
+                    e
+<span class="nc" id="L45">                        .getServerErrorException()</span>
+<span class="nc" id="L46">                        .getErrorObject()</span>
+<span class="nc" id="L47">                        .getDescription()</span>
+                );
+            } else {
+<span class="nc" id="L50">                serverErrorResponse.setCode(</span>
+<span class="nc" id="L51">                    e.getServerErrorException().getServerErrorType().getCode()</span>
+                );
+<span class="nc" id="L53">                serverErrorResponse.setMessage(</span>
+                    e
+<span class="nc" id="L55">                        .getServerErrorException()</span>
+<span class="nc" id="L56">                        .getServerErrorType()</span>
+<span class="nc" id="L57">                        .getMessage()</span>
+                );
+<span class="nc" id="L59">                serverErrorResponse.setErrorPath(</span>
+<span class="nc" id="L60">                    e.getServerErrorException().getSourcePath()</span>
+                );
+<span class="nc" id="L62">                serverErrorResponse.setDescription(e.getDelegateDescription());</span>
+            }
+        } else {
+<span class="nc bnc" id="L65" title="All 2 branches missed.">            if (e.getErrorResponseObject() != null) {</span>
+<span class="nc" id="L66">                log.debug(&quot;Passing pre-def error object&quot;);</span>
+<span class="nc" id="L67">                serverErrorResponse = e.getErrorResponseObject();</span>
+            } else {
+<span class="nc bnc" id="L69" title="All 4 branches missed.">                if (e.getErrorType() == null || e.getPath() == null) {</span>
+<span class="nc" id="L70">                    serverErrorResponse.setCode(</span>
+<span class="nc" id="L71">                        ServerError.ERROR_UNDEFINED.getCode()</span>
+                    );
+<span class="nc" id="L73">                    serverErrorResponse.setMessage(</span>
+<span class="nc" id="L74">                        ServerError.ERROR_UNDEFINED.getMessage()</span>
+                    );
+<span class="nc" id="L76">                    serverErrorResponse.setErrorPath(</span>
+<span class="nc" id="L77">                        Arrays.toString(e.getStackTrace())</span>
+                    );
+<span class="nc" id="L79">                    serverErrorResponse.setDescription(</span>
+<span class="nc" id="L80">                        e.getDelegateDescription()</span>
+                    );
+                } else {
+<span class="nc" id="L83">                    serverErrorResponse.setErrorPath(e.getPath());</span>
+<span class="nc" id="L84">                    serverErrorResponse.setCode(e.getErrorType().getCode());</span>
+<span class="nc" id="L85">                    serverErrorResponse.setMessage(</span>
+<span class="nc" id="L86">                        e.getErrorType().getMessage()</span>
+                    );
+<span class="nc" id="L88">                    serverErrorResponse.setDescription(</span>
+<span class="nc" id="L89">                        e.getDelegateDescription()</span>
+                    );
+                }
+            }
+        }
+
+<span class="nc" id="L95">        log.error(&quot;Delegate Level Error : {} : &quot;, serverErrorResponse);</span>
+
+        // return response entity
+<span class="nc" id="L98">        return new ResponseEntity&lt;&gt;(</span>
+            serverErrorResponse,
+            HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServerError.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.exception.enums</a> &gt; <span class="el_source">ServerError.java</span></div><h1>ServerError.java</h1><pre class="source lang-java linenums">package com.qbitum.template.exception.enums;
+
+import lombok.Getter;
+
+/**
+ * This Enumeration class is for handling internal server Exceptions.
+ * These errors are standard and will be shared between all teams of a project.
+ * If a developer has a need to update or add to these Enums, it is his/her responsibility to communicate the changes with the affecting teams.
+ */
+<span class="nc" id="L10">@Getter</span>
+public enum ServerError {
+<span class="nc" id="L12">    UNAUTHORIZED_API(510, &quot;API Denied for User Token&quot;),</span>
+<span class="nc" id="L13">    INACCESSIBLE_METHOD(511, &quot;Method Access Denied for User Token&quot;),</span>
+<span class="nc" id="L14">    METHOD_NOT_FOUND(512, &quot;Method Not Found&quot;),</span>
+<span class="nc" id="L15">    ERROR_UNDEFINED(513, &quot;Unidentified Error Detected : CRITICAL&quot;),</span>
+<span class="nc" id="L16">    DATA_LAYER_NOT_FOUND_ERROR(514, &quot;Requested data is not found on database&quot;),</span>
+<span class="nc" id="L17">    DATA_LAYER_INVALID_INSERT_ERROR(515, &quot;Invalid data inserted to database&quot;),</span>
+<span class="nc" id="L18">    LOGGING_ANNOTATION_ERROR(516, &quot;Log annotation error&quot;),</span>
+<span class="nc" id="L19">    UNDEFINED_WEBCLIENT_ERROR(</span>
+        517,
+        &quot;Unidentified Error received from WebClient request : CRITICAL&quot;
+    ),
+<span class="nc" id="L23">    ANNOTATION_USAGE_ERROR(</span>
+        516,
+        &quot;Incorrect use of custom annotations, Re-evaluate annotated methods&quot;
+    );
+
+<span class="nc" id="L28">    private final int code;</span>
+<span class="nc" id="L29">    private final String message;</span>
+
+<span class="nc" id="L31">    ServerError(int code, String message) {</span>
+<span class="nc" id="L32">        this.code = code;</span>
+<span class="nc" id="L33">        this.message = message;</span>
+<span class="nc" id="L34">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

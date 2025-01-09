@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DelegateResponseException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.exception</a> &gt; <span class="el_source">DelegateResponseException.java</span></div><h1>DelegateResponseException.java</h1><pre class="source lang-java linenums">package com.qbitum.template.exception;
+
+import com.qbitum.template.exception.enums.ServerError;
+import com.qbitum.template.server.model.ServerErrorResponse;
+import com.qbitum.template.utility.SourcePath;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+@Getter
+<span class="nc" id="L10">@Slf4j</span>
+public class DelegateResponseException extends RuntimeException {
+<span class="nc" id="L12">    private final ServerErrorException serverErrorException;</span>
+<span class="nc" id="L13">    private final ServerError errorType;</span>
+<span class="nc" id="L14">    private final String path;</span>
+<span class="nc" id="L15">    private final String delegateDescription;</span>
+<span class="nc" id="L16">    private final ServerErrorResponse errorResponseObject;</span>
+
+    /***
+     * Constructor for Delegate level exceptions with a passed throwable with custom description
+     *
+     * @param message a custom description for the exception, in addition to error message in cause
+     * @param cause a throwable exception, preferably of ServerErrorException class
+     */
+    public DelegateResponseException(String message, Throwable cause) {
+<span class="nc" id="L25">        super(cause);</span>
+<span class="nc" id="L26">        SourcePath.logThrowableStackTrace(cause);</span>
+<span class="nc" id="L27">        this.delegateDescription = message;</span>
+<span class="nc" id="L28">        this.errorType = null;</span>
+<span class="nc" id="L29">        this.path = null;</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (cause instanceof ServerErrorException) {</span>
+<span class="nc" id="L31">            this.serverErrorException = (ServerErrorException) cause;</span>
+        } else {
+<span class="nc" id="L33">            this.serverErrorException = null;</span>
+        }
+<span class="nc" id="L35">        this.errorResponseObject = null;</span>
+<span class="nc" id="L36">    }</span>
+
+    /***
+     * Constructor for Delegate level exceptions with a passed throwable
+     *
+     * @param cause a throwable exception, preferably of ServerErrorException class
+     */
+    public DelegateResponseException(Throwable cause) {
+<span class="nc" id="L44">        super(cause);</span>
+<span class="nc" id="L45">        SourcePath.logThrowableStackTrace(cause);</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (cause instanceof ServerErrorException) {</span>
+<span class="nc" id="L47">            this.serverErrorException = (ServerErrorException) cause;</span>
+<span class="nc" id="L48">            log.debug(</span>
+                &quot;Description : {}&quot;,
+<span class="nc" id="L50">                ((ServerErrorException) cause).getServerErrorDescription()</span>
+            );
+<span class="nc" id="L52">            this.delegateDescription =</span>
+<span class="nc" id="L53">                ((ServerErrorException) cause).getServerErrorDescription();</span>
+        } else {
+<span class="nc" id="L55">            this.serverErrorException = null;</span>
+<span class="nc" id="L56">            this.delegateDescription = null;</span>
+        }
+<span class="nc" id="L58">        this.errorType = null;</span>
+<span class="nc" id="L59">        this.path = null;</span>
+<span class="nc" id="L60">        this.errorResponseObject = null;</span>
+<span class="nc" id="L61">    }</span>
+
+    /***
+     * Use this Constructor to pass an ErrorResponse object, in case of an unidentified error is thrown
+     * Then the ErrorResponse object will be passed as the response instead of default
+     * Recommended for use
+     * @param cause receive Throwable error cause
+     * @param error Pre-def ServerErrorResponse object
+     */
+    public DelegateResponseException(
+        Throwable cause,
+        ServerErrorResponse error
+    ) {
+<span class="nc" id="L74">        super(cause);</span>
+<span class="nc" id="L75">        SourcePath.logThrowableStackTrace(cause);</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (cause instanceof ServerErrorException) {</span>
+<span class="nc" id="L77">            this.serverErrorException = (ServerErrorException) cause;</span>
+<span class="nc" id="L78">            log.debug(</span>
+                &quot;Description : {}&quot;,
+<span class="nc" id="L80">                ((ServerErrorException) cause).getServerErrorDescription()</span>
+            );
+<span class="nc" id="L82">            this.delegateDescription =</span>
+<span class="nc" id="L83">                ((ServerErrorException) cause).getServerErrorDescription();</span>
+<span class="nc" id="L84">            this.errorResponseObject = null;</span>
+        } else {
+<span class="nc" id="L86">            this.serverErrorException = null;</span>
+<span class="nc" id="L87">            this.delegateDescription = null;</span>
+<span class="nc" id="L88">            this.errorResponseObject = error;</span>
+        }
+<span class="nc" id="L90">        this.errorType = null;</span>
+<span class="nc" id="L91">        this.path = null;</span>
+<span class="nc" id="L92">    }</span>
+
+    /***
+     *  Constructor for Delegate level exceptions without a throwable passed
+     *
+     * @param message a custom description for the exception, in addition to error message in cause
+     * @param type error type from ServerError Enum
+     * @param path origin of exception, use SourcePath util to get the path
+     */
+    public DelegateResponseException(
+        String message,
+        ServerError type,
+        String path
+    ) {
+<span class="nc" id="L106">        super(message);</span>
+<span class="nc" id="L107">        this.serverErrorException = null;</span>
+<span class="nc" id="L108">        this.errorType = type;</span>
+<span class="nc" id="L109">        this.path = path;</span>
+<span class="nc" id="L110">        this.delegateDescription = message;</span>
+<span class="nc" id="L111">        this.errorResponseObject = null;</span>
+<span class="nc" id="L112">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseAspect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.annotations.aspect</a> &gt; <span class="el_source">BaseAspect.java</span></div><h1>BaseAspect.java</h1><pre class="source lang-java linenums">package com.qbitum.template.annotations.aspect;
+
+import com.qbitum.template.exception.ServerErrorException;
+import com.qbitum.template.exception.enums.ServerError;
+import com.qbitum.template.utility.SourcePath;
+import java.time.Duration;
+import java.time.LocalTime;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+/**
+ * This aspect has base aspects that are helpful for and can be used by other aspects
+ * Solution for issues faced when using manny aspects for a single method (single ProceedingJoinPoint)
+ */
+<span class="fc" id="L18">@RequiredArgsConstructor</span>
+<span class="fc" id="L19">@Slf4j</span>
+public abstract class BaseAspect {
+
+    /***
+     * helper for logging execution time after Mono method execution
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    protected Mono&lt;?&gt; logTimeMono(final ProceedingJoinPoint joinPoint)
+        throws Throwable {
+<span class="nc" id="L30">        LocalTime startTime = LocalTime.now();</span>
+
+<span class="nc" id="L32">        Object result = joinPoint.proceed();</span>
+
+<span class="nc" id="L34">        String methodName = joinPoint.getSignature().getName();</span>
+<span class="nc" id="L35">        String className = joinPoint.getTarget().getClass().getSimpleName();</span>
+
+        //  Can use logMethodExecutionTime.value() to get annotation values
+
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if (result instanceof Mono) {</span>
+<span class="nc" id="L40">            return ((Mono&lt;?&gt;) result).map(</span>
+                    signalType -&gt; {
+<span class="nc" id="L42">                        LocalTime completeTime = LocalTime.now();</span>
+<span class="nc" id="L43">                        Duration completeDuration = Duration.between(</span>
+                            startTime,
+                            completeTime
+                        );
+<span class="nc" id="L47">                        long completeTimeDiffSeconds = completeDuration.getSeconds();</span>
+<span class="nc" id="L48">                        long completeTimeDiffMilliSec =</span>
+<span class="nc" id="L49">                            completeDuration.toMillis() -</span>
+                            completeTimeDiffSeconds *
+                            1000;
+                        try {
+<span class="nc" id="L53">                            return signalType;</span>
+<span class="nc" id="L54">                        } catch (Throwable e) {</span>
+<span class="nc" id="L55">                            log.debug(</span>
+                                &quot;Error encountered during execution for method: &quot; +
+                                &quot;{}.{} : Duration to return : [{} seconds:{} milliseconds]&quot;,
+                                className,
+                                methodName,
+<span class="nc" id="L60">                                completeTimeDiffSeconds,</span>
+<span class="nc" id="L61">                                completeTimeDiffMilliSec</span>
+                            );
+<span class="nc" id="L63">                            return Mono.error(</span>
+                                new ServerErrorException(
+                                    ServerError.ERROR_UNDEFINED,
+<span class="nc" id="L66">                                    SourcePath.findCurrentPath()</span>
+                                )
+                            );
+                        }
+                    }
+                )
+<span class="nc" id="L72">                .doOnSuccess(</span>
+                    mono -&gt; {
+<span class="nc" id="L74">                        LocalTime completeTime = LocalTime.now();</span>
+<span class="nc" id="L75">                        Duration completeDuration = Duration.between(</span>
+                            startTime,
+                            completeTime
+                        );
+<span class="nc" id="L79">                        long completeTimeDiffSeconds = completeDuration.getSeconds();</span>
+<span class="nc" id="L80">                        long completeTimeDiffMilliSec =</span>
+<span class="nc" id="L81">                            completeDuration.toMillis() -</span>
+                            completeTimeDiffSeconds *
+                            1000;
+<span class="nc" id="L84">                        getOnCompleteDebugLog(</span>
+                            className,
+                            methodName,
+                            completeTimeDiffSeconds,
+                            completeTimeDiffMilliSec
+                        );
+<span class="nc" id="L90">                    }</span>
+                )
+<span class="nc" id="L92">                .doOnError(</span>
+                    error -&gt; {
+<span class="nc" id="L94">                        LocalTime completeTime = LocalTime.now();</span>
+<span class="nc" id="L95">                        Duration completeDuration = Duration.between(</span>
+                            startTime,
+                            completeTime
+                        );
+<span class="nc" id="L99">                        long completeTimeDiffSeconds = completeDuration.getSeconds();</span>
+<span class="nc" id="L100">                        long completeTimeDiffMilliSec =</span>
+<span class="nc" id="L101">                            completeDuration.toMillis() -</span>
+                            completeTimeDiffSeconds *
+                            1000;
+<span class="nc" id="L104">                        log.debug(&quot;Other Error data received on error&quot;);</span>
+<span class="nc" id="L105">                        getOnErrorErrorLog(</span>
+                            className,
+                            methodName,
+                            completeTimeDiffSeconds,
+                            completeTimeDiffMilliSec
+                        );
+<span class="nc" id="L111">                        throw new ServerErrorException(</span>
+                            ServerError.ERROR_UNDEFINED,
+<span class="nc" id="L113">                            SourcePath.findCurrentPath()</span>
+                        );
+                    }
+                );
+        } else {
+<span class="nc" id="L118">            getTypeErrorDebugLog(className, methodName);</span>
+<span class="nc" id="L119">            return Mono.error(</span>
+                new ServerErrorException(
+                    ServerError.LOGGING_ANNOTATION_ERROR,
+<span class="nc" id="L122">                    SourcePath.findCurrentPath()</span>
+                )
+            );
+        }
+    }
+
+    /***
+     * helper for logging execution time after Flux method execution
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    protected Flux&lt;?&gt; logTimeFlux(final ProceedingJoinPoint joinPoint)
+        throws Throwable {
+<span class="nc" id="L136">        LocalTime startTime = LocalTime.now();</span>
+
+<span class="nc" id="L138">        Object result = joinPoint.proceed();</span>
+
+<span class="nc" id="L140">        String methodName = joinPoint.getSignature().getName();</span>
+<span class="nc" id="L141">        String className = joinPoint.getTarget().getClass().getSimpleName();</span>
+
+        //  logMethodExecutionTime.value()
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (result instanceof Flux) {</span>
+<span class="nc" id="L146">            return ((Flux&lt;?&gt;) result).map(</span>
+                    signalType -&gt; {
+<span class="nc" id="L148">                        LocalTime completeTime = LocalTime.now();</span>
+<span class="nc" id="L149">                        Duration completeDuration = Duration.between(</span>
+                            startTime,
+                            completeTime
+                        );
+<span class="nc" id="L153">                        long completeTimeDiffSeconds = completeDuration.getSeconds();</span>
+<span class="nc" id="L154">                        long completeTimeDiffMilliSec =</span>
+<span class="nc" id="L155">                            completeDuration.toMillis() -</span>
+                            completeTimeDiffSeconds *
+                            1000;
+
+                        try {
+<span class="nc" id="L160">                            return signalType;</span>
+<span class="nc" id="L161">                        } catch (Throwable e) {</span>
+<span class="nc" id="L162">                            getOnErrorErrorLog(</span>
+                                className,
+                                methodName,
+                                completeTimeDiffSeconds,
+                                completeTimeDiffMilliSec
+                            );
+<span class="nc" id="L168">                            return Flux.error(</span>
+                                new ServerErrorException(
+                                    ServerError.ERROR_UNDEFINED,
+<span class="nc" id="L171">                                    SourcePath.findCurrentPath()</span>
+                                )
+                            );
+                        }
+                    }
+                )
+<span class="nc" id="L177">                .doOnComplete(</span>
+                    () -&gt; {
+<span class="nc" id="L179">                        LocalTime completeTime = LocalTime.now();</span>
+<span class="nc" id="L180">                        Duration completeDuration = Duration.between(</span>
+                            startTime,
+                            completeTime
+                        );
+<span class="nc" id="L184">                        long completeTimeDiffSeconds = completeDuration.getSeconds();</span>
+<span class="nc" id="L185">                        long completeTimeDiffMilliSec =</span>
+<span class="nc" id="L186">                            completeDuration.toMillis() -</span>
+                            completeTimeDiffSeconds *
+                            1000;
+<span class="nc" id="L189">                        getOnCompleteDebugLog(</span>
+                            className,
+                            methodName,
+                            completeTimeDiffSeconds,
+                            completeTimeDiffMilliSec
+                        );
+<span class="nc" id="L195">                    }</span>
+                )
+<span class="nc" id="L197">                .doOnError(</span>
+                    error -&gt; {
+<span class="nc" id="L199">                        LocalTime completeTime = LocalTime.now();</span>
+<span class="nc" id="L200">                        Duration completeDuration = Duration.between(</span>
+                            startTime,
+                            completeTime
+                        );
+<span class="nc" id="L204">                        long completeTimeDiffSeconds = completeDuration.getSeconds();</span>
+<span class="nc" id="L205">                        long completeTimeDiffMilliSec =</span>
+<span class="nc" id="L206">                            completeDuration.toMillis() -</span>
+                            completeTimeDiffSeconds *
+                            1000;
+<span class="nc" id="L209">                        getOnErrorErrorLog(</span>
+                            className,
+                            methodName,
+                            completeTimeDiffSeconds,
+                            completeTimeDiffMilliSec
+                        );
+<span class="nc" id="L215">                    }</span>
+                );
+        } else {
+<span class="nc" id="L218">            getTypeErrorDebugLog(className, methodName);</span>
+<span class="nc" id="L219">            return Flux.error(</span>
+                new ServerErrorException(
+                    ServerError.ERROR_UNDEFINED,
+<span class="nc" id="L222">                    SourcePath.findCurrentPath()</span>
+                )
+            );
+        }
+    }
+
+    static void getTypeErrorDebugLog(String className, String methodName) {
+<span class="nc" id="L229">        log.error(</span>
+            &quot;In valid annotation for method : {}.{}&quot;,
+            className,
+            methodName
+        );
+<span class="nc" id="L234">    }</span>
+
+    static void getOnCompleteDebugLog(
+        String className,
+        String methodName,
+        long completeTimeDiffSeconds,
+        long completeTimeDiffMilliSec
+    ) {
+<span class="nc" id="L242">        log.debug(</span>
+            &quot;Execution Duration for method: {}.{} : &quot; +
+            &quot;Duration to return : [{} seconds:{} milliseconds]&quot;,
+            className,
+            methodName,
+<span class="nc" id="L247">            completeTimeDiffSeconds,</span>
+<span class="nc" id="L248">            completeTimeDiffMilliSec</span>
+        );
+<span class="nc" id="L250">    }</span>
+
+    static void getOnErrorErrorLog(
+        String className,
+        String methodName,
+        long completeTimeDiffSeconds,
+        long completeTimeDiffMilliSec
+    ) {
+<span class="nc" id="L258">        log.error(</span>
+            &quot;Error encountered during execution for method: &quot; +
+            &quot;{}.{} : Duration to return : [{} seconds:{} milliseconds]&quot;,
+            className,
+            methodName,
+<span class="nc" id="L263">            completeTimeDiffSeconds,</span>
+<span class="nc" id="L264">            completeTimeDiffMilliSec</span>
+        );
+<span class="nc" id="L266">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

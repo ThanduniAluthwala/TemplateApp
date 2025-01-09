@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SourcePath.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">template service</a> &gt; <a href="index.source.html" class="el_package">com.qbitum.template.utility</a> &gt; <span class="el_source">SourcePath.java</span></div><h1>SourcePath.java</h1><pre class="source lang-java linenums">package com.qbitum.template.utility;
+
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+
+@UtilityClass
+<span class="nc" id="L7">@Slf4j</span>
+<span class="nc" id="L8">public class SourcePath {</span>
+
+    public static void logPath() {
+        StackTraceElement[] stackTraceElements = Thread
+<span class="nc" id="L12">            .currentThread()</span>
+<span class="nc" id="L13">            .getStackTrace();</span>
+
+<span class="nc bnc" id="L15" title="All 2 branches missed.">        if (stackTraceElements.length &gt; 2) {</span>
+<span class="nc" id="L16">            StackTraceElement callingMethod = stackTraceElements[2];</span>
+<span class="nc" id="L17">            String className = callingMethod.getClassName();</span>
+<span class="nc" id="L18">            String methodName = callingMethod.getMethodName();</span>
+<span class="nc" id="L19">            log.debug(&quot;Path: {}.{}&quot;, className, methodName);</span>
+<span class="nc" id="L20">        } else {</span>
+<span class="nc" id="L21">            log.debug(&quot;Path not found&quot;);</span>
+        }
+<span class="nc" id="L23">    }</span>
+
+    public static String findCurrentPath() {
+        StackTraceElement[] stackTraceElements = Thread
+<span class="nc" id="L27">            .currentThread()</span>
+<span class="nc" id="L28">            .getStackTrace();</span>
+
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (stackTraceElements.length &gt; 2) {</span>
+<span class="nc" id="L31">            StackTraceElement callingMethod = stackTraceElements[2];</span>
+<span class="nc" id="L32">            String className = callingMethod.getClassName();</span>
+<span class="nc" id="L33">            String methodName = callingMethod.getMethodName();</span>
+<span class="nc" id="L34">            log.debug(&quot;Path: {}.{}&quot;, className, methodName);</span>
+<span class="nc" id="L35">            return className + &quot;.&quot; + methodName;</span>
+        } else {
+<span class="nc" id="L37">            log.debug(&quot;Path Not found&quot;);</span>
+<span class="nc" id="L38">            return &quot;Path Not Found&quot;;</span>
+        }
+    }
+
+    public static void logThrowableStackTrace(Throwable cause) {
+<span class="nc" id="L43">        log.debug(&quot;DelegateResponseException received Throwable Error&quot;);</span>
+<span class="nc" id="L44">        log.error(&quot;INTERNAL SERVER ERROR : {}&quot;, (Object) cause.getStackTrace());</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (cause.getCause() != null) log.error(</span>
+            &quot;INTERNAL SERVER ERROR : {}&quot;,
+            (Object) cause
+        );
+<span class="nc" id="L49">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

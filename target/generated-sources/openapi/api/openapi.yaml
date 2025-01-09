@@ -1,0 +1,50 @@
+openapi: 3.0.0
+info:
+  title: Weather Client Microservice API
+  version: 1.0.0
+servers:
+- description: Weather Server
+  url: http://localhost:4010
+paths:
+  /weather-info:
+    get:
+      operationId: weatherInfo
+      parameters:
+      - explode: true
+        in: query
+        name: latitude
+        required: true
+        schema:
+          type: number
+        style: form
+      - explode: true
+        in: query
+        name: longitude
+        required: true
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherInfo'
+          description: Weather information retrieved successfully
+      summary: Get weather information using user location
+      tags:
+      - weatherInfo
+      x-accepts: application/json
+components:
+  schemas:
+    WeatherInfo:
+      example:
+        temperature: 0.8008281904610115
+        conditions: conditions
+      properties:
+        temperature:
+          type: number
+        conditions:
+          type: string
+      type: object
+
