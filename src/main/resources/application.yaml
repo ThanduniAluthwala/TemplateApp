@@ -1,7 +1,7 @@
 # common service properties for all environments
 # can be overridden
 server:
-  port: 9095
+  port: 9000
 
 spring:
   application:
@@ -10,10 +10,9 @@ spring:
     discovery:
       enabled: false
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/studentManagement
-    username: postgres
-    password: postgres
-
+    url: r2dbc:postgresql://localhost:5432/rest-crud
+    username: restcrud
+    password: restcrud
 auth:
   opaUrl: http://localhost:1234/v1/data/
 
