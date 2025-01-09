@@ -1,7 +1,6 @@
 FROM openjdk:17-jdk-slim
-RUN apt-get update && apt-get install -y curl
-MAINTAINER Qbitum
-EXPOSE 8088
-COPY /target/*.jar /app/application.jar
+WORKDIR /app
+COPY target/template-app-0.0.2.jar template-app-0.0.2.jar
+EXPOSE 9000
 
-ENTRYPOINT ["java","-jar","/app/application.jar"]
+ENTRYPOINT ["java","-jar","template-app-0.0.2.jar"]
