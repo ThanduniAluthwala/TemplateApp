@@ -8,7 +8,7 @@ Template service has the required basic dependencies to implement your microserv
 2. Open it using your favorite IDE.
 3. Change the artifactId, name and description of the service in the pom file.
 4. Refactor the project structure 
-5. Initially the main package name is com.qbitum.ifinitybanking. Change it to com.qbitum. < your service name>
+5. Initially the main package name is com.qbitum.template. Change it to com.qbitum. < your service name>
 6. Change the main method class name to your service name (TemplateserviceApplication ->  <your service name>Application).
 7. Change the main test method class name to your service main test class name. ( TemplateserviceApplicationTests -> <your service name>ApplicationTests)
 8. Now create a new git repository for your service.
@@ -88,7 +88,7 @@ example :
     "code": 510,
     "status": "ERROR",
     "message": "This is service forbiden",
-    "errorPath": "com.qbitum.ifinitybanking.service.impl.SampleServiceImpl.stringGenerator"
+    "errorPath": "com.qbitum.template.service.impl.SampleServiceImpl.stringGenerator"
     }
 - All errors originating in the service and data layers should be handled and passed as `Mono.error(new ServerErrorException(...))`
 - These exceptions should be finally caught and thrown as `throw new DelegateResponseException(error);`<br>

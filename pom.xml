@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.qbitum</groupId>
-	<artifactId>ifinitybanking</artifactId>
+	<artifactId>template-app</artifactId>
 	<version>0.0.2</version>
 	<name>template service</name>
-	<description>Template service for Ifinity Banking </description>
+	<description>Template service for Spring </description>
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2023.0.0</spring-cloud.version>
@@ -207,8 +207,8 @@
 								${project.basedir}/src/main/resources/openapi/api.yml
 							</inputSpec>
 							<generatorName>spring</generatorName>
-							<apiPackage>com.qbitum.ifinitybanking.server.api</apiPackage>
-							<modelPackage>com.qbitum.ifinitybanking.server.model</modelPackage>
+							<apiPackage>com.qbitum.template.server.api</apiPackage>
+							<modelPackage>com.qbitum.template.server.model</modelPackage>
 							<supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
 
 							<configOptions>
@@ -230,8 +230,8 @@
 							</inputSpec>
 							<generatorName>java</generatorName>
 							<library>webclient</library>
-							<apiPackage>com.qbitum.ifinitybanking.client.api</apiPackage>
-							<modelPackage>com.qbitum.ifinitybanking.client.model</modelPackage>
+							<apiPackage>com.qbitum.template.client.api</apiPackage>
+							<modelPackage>com.qbitum.template.client.model</modelPackage>
 							<generateApiTests>false</generateApiTests>
 							<generateModelTests>false</generateModelTests>
 							<!-- Template to override some default generation template for the webclient -->
