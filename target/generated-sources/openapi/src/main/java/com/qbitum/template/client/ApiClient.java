@@ -67,7 +67,7 @@ import com.qbitum.template.client.auth.HttpBasicAuth;
 import com.qbitum.template.client.auth.HttpBearerAuth;
 import com.qbitum.template.client.auth.ApiKeyAuth;
 
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-01-13T18:04:34.601550161+05:30[Asia/Colombo]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-01-13T18:17:35.101977823+05:30[Asia/Colombo]")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);

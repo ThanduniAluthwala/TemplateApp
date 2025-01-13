@@ -26,11 +26,8 @@ public class FruitController {
     public Mono<ResponseEntity<Fruit>> createFruit(
         @RequestBody Mono<Fruit> fruitMono
     ) {
-        return fruitMono
-            .flatMap(fruitDao::save)
-            .map(
-                savedFruit ->
-                    ResponseEntity.status(HttpStatus.CREATED).body(savedFruit)
-            );
+        return fruitMono.map(
+            fruit -> ResponseEntity.status(HttpStatus.CREATED).body(fruit)
+        );
     }
 }

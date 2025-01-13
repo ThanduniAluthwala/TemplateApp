@@ -26,12 +26,9 @@ public class FruitController {
     public Mono&lt;ResponseEntity&lt;Fruit&gt;&gt; createFruit(
         @RequestBody Mono&lt;Fruit&gt; fruitMono
     ) {
-<span class="nc" id="L29">        return fruitMono</span>
-<span class="nc" id="L30">            .flatMap(fruitDao::save)</span>
-<span class="nc" id="L31">            .map(</span>
-                savedFruit -&gt;
-<span class="nc" id="L33">                    ResponseEntity.status(HttpStatus.CREATED).body(savedFruit)</span>
-            );
+<span class="nc" id="L29">        return fruitMono.map(</span>
+<span class="nc" id="L30">            fruit -&gt; ResponseEntity.status(HttpStatus.CREATED).body(fruit)</span>
+        );
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

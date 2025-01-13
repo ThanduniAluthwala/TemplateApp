@@ -18,7 +18,7 @@ import jakarta.annotation.Generated;
  * ServerErrorResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-01-13T18:04:34.085056168+05:30[Asia/Colombo]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-01-13T18:17:34.618622380+05:30[Asia/Colombo]")
 public class ServerErrorResponse {
 
   private Integer code;
