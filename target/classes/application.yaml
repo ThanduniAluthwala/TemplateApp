@@ -10,9 +10,9 @@ spring:
     discovery:
       enabled: false
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/rest-crud
-    username: restcrud
-    password: restcrud
+    url: r2dbc:postgresql://localhost:5432/rest_crud
+    username: postgres
+    password: postgres
 auth:
   opaUrl: http://localhost:1234/v1/data/
 

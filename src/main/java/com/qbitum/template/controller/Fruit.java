@@ -16,6 +16,6 @@ public class Fruit {
     @Column("id")
     private Integer id;
 
-    @Column("name")
+    @Column("fruit_name")
     private String name;
 }

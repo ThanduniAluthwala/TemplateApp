@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * A delegate to be called by the {@link V2ApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-01-09T15:55:27.912939730+05:30[Asia/Colombo]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-01-13T17:59:21.277104077+05:30[Asia/Colombo]")
 public interface V2ApiDelegate {
 
     default Optional<NativeWebRequest> getRequest() {

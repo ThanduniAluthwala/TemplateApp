@@ -4,10 +4,7 @@ import com.qbitum.template.dao.FruitDao;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
@@ -16,32 +13,24 @@ import reactor.core.publisher.Mono;
 public class FruitController {
     private final FruitDao fruitDao;
 
-<span class="fc" id="L19">    public FruitController(FruitDao fruitDao) {</span>
-<span class="fc" id="L20">        this.fruitDao = fruitDao;</span>
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L16">    public FruitController(FruitDao fruitDao) {</span>
+<span class="fc" id="L17">        this.fruitDao = fruitDao;</span>
+<span class="fc" id="L18">    }</span>
 
     @GetMapping
     public Mono&lt;String&gt; sayHello() {
-<span class="nc" id="L25">        return Mono.just(&quot;Hello&quot;);</span>
+<span class="nc" id="L22">        return Mono.just(&quot;Hello&quot;);</span>
     }
 
     @PostMapping
-    @Transactional
-    public Mono&lt;ResponseEntity&lt;Fruit&gt;&gt; createFruit(Fruit fruit) {
-<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (fruit.getId() != null) {</span>
-<span class="nc" id="L32">            return Mono.error(</span>
-                new ResponseStatusException(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    &quot;Id was invalidly set on request.&quot;
-                )
-            );
-        }
-
-<span class="nc" id="L40">        return fruitDao</span>
-<span class="nc" id="L41">            .save(fruit)</span>
-<span class="nc" id="L42">            .map(</span>
+    public Mono&lt;ResponseEntity&lt;Fruit&gt;&gt; createFruit(
+        @RequestBody Mono&lt;Fruit&gt; fruitMono
+    ) {
+<span class="nc" id="L29">        return fruitMono</span>
+<span class="nc" id="L30">            .flatMap(fruitDao::save)</span>
+<span class="nc" id="L31">            .map(</span>
                 savedFruit -&gt;
-<span class="nc" id="L44">                    ResponseEntity.status(HttpStatus.CREATED).body(savedFruit)</span>
+<span class="nc" id="L33">                    ResponseEntity.status(HttpStatus.CREATED).body(savedFruit)</span>
             );
     }
 }
