@@ -16,7 +16,7 @@ package com.qbitum.template.client;
 import java.util.Collection;
 import java.util.Iterator;
 
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-01-13T17:59:21.821392446+05:30[Asia/Colombo]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-01-13T18:04:34.601550161+05:30[Asia/Colombo]")
 public class StringUtil {
   /**
    * Check if the given array contains the given value (with case-insensitive comparison).
